@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>האתר שלי</title>
+    <style>
+        /* עיצוב כללי של הדף */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        /* תוכן האתר שיוצג רק בטלפונים */
+        #mobile-content {
+            display: block;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* מסך החסימה למחשבים - כברירת מחדל הוא מוסתר */
+        #desktop-blocker {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000; /* מסך שחור */
+            color: #ff3333; /* טקסט אדום */
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        #desktop-blocker .sub-text {
+            font-size: 16px;
+            color: #888;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="desktop-blocker">
+        <div>החיבור נכשל: הגישה מותרת מטלפונים בלבד.</div>
+        <div class="sub-text">ERR_CONNECTION_REFUSED</div>
+    </div>
+
+    <div id="mobile-content">
+        <h1>ברוכים הבאים לאתר הנייד שלי!</h1>
+        <p>טקסט זה מופיע מכיוון שאתה גולש מהטלפון.</p>
+    </div>
+
+    <script>
+        function checkDevice() {
+            const blocker = document.getElementById('desktop-blocker');
+            const content = document.getElementById('mobile-content');
+            
+            // בדיקה האם המשתמש גולש ממחשב (לפי רוחב מסך או סוג מכשיר)
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isSmallScreen = window.innerWidth <= 768;
+
+            // אם זה לא טלפון וגם המסך רחב (מחשב)
+            if (!isMobile && !isSmallScreen) {
+                blocker.style.display = 'flex'; // מציג את מסך החסימה
+                content.style.display = 'none';  // מסתיר את תוכן האתר
+            } else {
+                blocker.style.display = 'none';
+                content.style.display = 'block';
+            }
+        }
+
+        // הפעלת הבדיקה בטעינת הדף ובשינוי גודל החלון
+        window.addEventListener('DOMContentLoaded', checkDevice);
+        window.addEventListener('resize', checkDevice);
+    </script>
+
+</body>
+</html>
