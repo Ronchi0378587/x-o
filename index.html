@@ -3,166 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>מערכת הפעלה לנייד - PhoneOS</title>
+    <title>PHANTOM_OS_v4.02</title>
     <style>
-        /* עיצוב בסיסי של שולחן עבודה */
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle, #251c4a 0%, #0b071a 100%);
+            background-color: #020205;
+            color: #00ff66;
+            font-family: 'Share Tech Mono', monospace;
             overflow: hidden;
-            color: white;
             user-select: none; -webkit-user-select: none;
         }
 
+        /* מסך חסימה קשיח למחשבים (ולמדמי טלפונים) */
         #desktop-blocker {
             display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #000; color: #ff3333; z-index: 99999;
+            background: #000; color: #ff1133; z-index: 999999;
             flex-direction: column; justify-content: center; align-items: center;
-            font-size: 24px; font-weight: bold;
+            text-align: center; font-weight: bold; box-sizing: border-box; padding: 20px;
         }
-        #desktop-blocker .sub-text { font-size: 16px; color: #888; margin-top: 10px; }
-
-        #mobile-content { display: none; width: 100%; height: 100%; position: relative; }
-
-        @media (max-width: 768px) {
-            #mobile-content { display: block; }
-            #desktop-blocker { display: none !important; }
+        .glitch-text {
+            font-size: 28px; letter-spacing: 2px;
+            animation: glitch 1s infinite;
         }
-
-        /* אייקונים על שולחן העבודה */
-        .icon-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-            padding: 20px; max-width: 300px;
-        }
-        .desktop-icon {
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            cursor: pointer; background: rgba(255, 255, 255, 0.05); padding: 10px;
-            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .desktop-icon:active { background: rgba(255, 255, 255, 0.2); }
-        .desktop-icon span { font-size: 30px; margin-bottom: 5px; }
-        .desktop-icon p { margin: 0; font-size: 12px; font-weight: 500; }
-
-        /* מערכת חלונות */
-        .window {
-            display: none; position: absolute; top: 15%; left: 5%; width: 90%; height: 60%;
-            background: #1a1a24; border: 2px solid #3b3b4f; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; flex-direction: column;
-            overflow: hidden;
-        }
-        .window-header {
-            background: #252538; padding: 10px; display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid #3b3b4f;
-        }
-        .window-title { font-size: 14px; font-weight: bold; margin-right: 5px; }
-        .close-btn {
-            background: #ff5555; border: none; width: 20px; height: 20px;
-            border-radius: 50%; color: white; font-weight: bold; font-size: 12px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
-        .window-content { padding: 15px; flex: 1; overflow-y: auto; text-align: center; }
-
-        /* עיצוב שורת המשימות (Taskbar) בתחתית */
-        .taskbar {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
-            background: rgba(15, 15, 25, 0.8); backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 15px; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .live-clock { font-size: 14px; font-weight: bold; color: #00ffcc; }
-
-        /* סגנון משחק הכדור */
-        .game-container {
-            position: relative; width: 180px; height: 180px; border: 3px solid #00ffcc;
-            border-radius: 50%; margin: 10px auto; background: #111; overflow: hidden;
-        }
-        #ball {
-            position: absolute; width: 20px; height: 20px; background: #00ffcc;
-            border-radius: 50%; top: 80px; left: 80px; box-shadow: 0 0 10px #00ffcc;
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 #00ff66; }
+            50% { text-shadow: -2px 0 #ff1133; }
+            100% { text-shadow: 2px 0 #00ff66; }
         }
 
-        /* סגנון המטריקס */
-        #matrix-canvas { width: 100%; height: 100%; display: block; background: black; }
+        /* תוכן האתר המרכזי */
+        #mobile-content {
+            display: none; width: 100%; height: 100%; position: relative;
+            box-sizing: border-box; border: 2px solid #00ff66;
+        }
+
+        /* תפריט ראשי סייבר */
+        .system-header {
+            padding: 10px; background: rgba(0, 255, 102, 0.1);
+            border-bottom: 1px solid #00ff66; font-size: 14px;
+            display: flex; justify-content: space-between;
+        }
+
+        .apps-container {
+            display: flex; flex-direction: column; gap: 15px; padding: 20px;
+        }
+
+        .cyber-btn {
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #00ff66;
+            color: #00ff66;
+            padding: 15px;
+            font-size: 16px;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: right;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+        }
+        .cyber-btn:active {
+            background: #00ff66;
+            color: #000;
+        }
+
+        /* מסכי האפליקציות */
+        .app-screen {
+            display: none; position: absolute; top: 40px; left: 0; width: 100%; height: calc(100% - 40px);
+            background: #020205; z-index: 100; flex-direction: column; box-sizing: border-box;
+        }
+        .app-header {
+            padding: 10px; background: #00ff66; color: #000; font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .back-btn {
+            background: transparent; border: 1px solid #000; font-weight: bold; cursor: pointer;
+        }
+
+        /* אפליקציית סאונד / רדאר */
+        #radar-area {
+            flex: 1; background: radial-gradient(circle, #00220a 0%, #000000 80%);
+            position: relative; overflow: hidden;
+        }
+        .radar-sweep {
+            position: absolute; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,102,0.15), transparent);
+            animation: sweep 2s linear infinite;
+        }
+        @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        /* אפליקציית מצלמה */
+        #video-feed {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: matrix(0, 1, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1) hue-rotate(90deg) contrast(150%);
+        }
     </style>
 </head>
 <body>
 
     <div id="desktop-blocker">
-        <div>הגישה מותרת מטלפונים בלבד.</div>
-        <div class="sub-text">ERR_NOT_A_MOBILE_DEVICE</div>
+        <div class="glitch-text">CRITICAL_ERROR: UNKNOWN_HARDWARE</div>
+        <div style="font-size: 14px; color: #555; margin-top: 15px; max-width: 80%;">
+            SYSTEM LOCKED. REAL MOBILE HARDWARE CORES REQUIRED. EMULATION DETECTED.
+        </div>
     </div>
 
     <div id="mobile-content">
-        
-        <div class="icon-grid">
-            <div class="desktop-icon" onclick="openWindow('win-game')">
-                <span>🎯</span>
-                <p>איזון כדור</p>
+        <div class="system-header">
+            <span>CORE: ACTIVE</span>
+            <span id="live-timer">00:00:00</span>
+        </div>
+
+        <div class="apps-container">
+            <button class="cyber-btn" onclick="openApp('app-audio')">[01] // סורק תדרים אקוסטי</button>
+            <button class="cyber-btn" onclick="openApp('app-cam')">[02] // מצב ראיית לילה (מצלמה)</button>
+            <button class="cyber-btn" onclick="openApp('app-sys')">[03] // נתוני חומרה בזמן אמת</button>
+        </div>
+
+        <div id="app-audio" class="app-screen">
+            <div class="app-header">
+                <span>AUDIO_SYNTH_SCANNER</span>
+                <button class="back-btn" onclick="closeApp('app-audio')">X</button>
             </div>
-            <div class="desktop-icon" onclick="openWindow('win-torch')">
-                <span>🔦</span>
-                <p>פלאש האקר</p>
-            </div>
-            <div class="desktop-icon" onclick="openWindow('win-matrix')">
-                <span>💻</span>
-                <p>קוד מטריקס</p>
+            <div id="radar-area">
+                <div class="radar-sweep"></div>
+                <p style="text-align:center; padding:20px; font-size:14px; pointer-events:none;">גע והזז את האצבע על המסך כדי לשנות תדרי קשר</p>
+                <p id="audio-stats" style="position:absolute; bottom:10px; left:10px; font-size:12px; pointer-events:none;"></p>
             </div>
         </div>
 
-        <div id="win-game" class="window">
-            <div class="window-header">
-                <span class="window-title">משחק איזון חיישנים</span>
-                <button class="close-btn" onclick="closeWindow('win-game')">X</button>
+        <div id="app-cam" class="app-screen">
+            <div class="app-header">
+                <span>THERMAL_VISION_FEED</span>
+                <button class="back-btn" onclick="closeApp('app-cam')">X</button>
             </div>
-            <div class="window-content">
-                <div class="game-container"><div id="ball"></div></div>
-                <button id="start-btn" style="padding: 8px 16px; background:#00ffcc; border:none; border-radius:5px; font-weight:bold;">הפעל חיישנים</button>
-                <p id="status" style="font-size:12px; color:#aaa;"></p>
+            <div style="flex:1; background:black; position:relative; overflow:hidden;">
+                <video id="video-feed" autoplay playsinline muted></video>
             </div>
         </div>
 
-        <div id="win-torch" class="window">
-            <div class="window-header">
-                <span class="window-title">פריצת חומרה: פנס</span>
-                <button class="close-btn" onclick="closeWindow('win-torch')">X</button>
+        <div id="app-sys" class="app-screen">
+            <div class="app-header">
+                <span>SYSTEM_LOGS</span>
+                <button class="back-btn" onclick="closeApp('app-sys')">X</button>
             </div>
-            <div class="window-content">
-                <p>השתמש בפקודת מערכת כדי להפעיל את הפלאש של המצלמה!</p>
-                <button onclick="toggleFlashlight()" style="padding: 15px 30px; font-size:18px; background:#ffaa00; border:none; border-radius:10px; font-weight:bold; color:black; cursor:pointer; margin-top:10px;">הדלק/כבה פנס 💡</button>
-                <p id="torch-status" style="font-size:12px; color:#888; margin-top:10px;"></p>
-            </div>
-        </div>
-
-        <div id="win-matrix" class="window" style="height: 70%;">
-            <div class="window-header">
-                <span class="window-title">Terminal - Matrix Code</span>
-                <button class="close-btn" onclick="closeWindow('win-matrix')">X</button>
-            </div>
-            <div class="window-content" style="padding:0; overflow:hidden;">
-                <canvas id="matrix-canvas"></canvas>
+            <div style="padding: 20px; font-size:13px; line-height: 1.6; overflow-y:auto; flex:1;">
+                <p>> LOADING HARDWARE CORES...</p>
+                <p id="sys-touch">> TOUCH POINTS DETECTED: 0</p>
+                <p id="sys-orient">> ORIENTATION REF: INITIALIZING...</p>
+                <p style="color:#ff1133;">> OVERRIDE STATE: FALSE</p>
+                <p style="color:#00ff66;">> NET_STATUS: SECURE_CORE_ONLINE</p>
             </div>
         </div>
-
-        <div class="taskbar">
-            <div style="font-weight: bold; color: #00ffcc;">⚡ PhoneOS</div>
-            <div class="live-clock" id="clock">00:00:00</div>
-        </div>
-
     </div>
 
     <script>
         let bypassActive = false;
 
-        // הגנת מכשיר
-        function strictDeviceCheck() {
+        // 🔥 פונקציית החסימה המשודרגת - חוסמת גם הדמיית טלפון ב-F12!
+        function antiEmulationCheck() {
             if (bypassActive) return;
-            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            const isSmallScreen = window.innerWidth <= 768;
 
-            if (!isMobileUA || !isTouchDevice || !isSmallScreen) {
+            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isSmallScreen = window.innerWidth <= 768;
+            
+            // בדיקת עומק חומרה: האם יש למכשיר תמיכה אמיתית במגע רב-נקודתי
+            const hasTrueTouch = ('ontouchstart' in window) && (navigator.maxTouchPoints > 0);
+            
+            // בדיקת זיוף: דפדפנים במחשב שמדמים טלפון משאירים את ה-User Agent אבל משקרים לגבי נתוני פלטפורמה מסוימים
+            const isEmulated = !hasTrueTouch && isSmallScreen;
+
+            if (!isMobileUA || isEmulated || !isSmallScreen) {
                 document.getElementById('desktop-blocker').style.display = 'flex';
                 document.getElementById('mobile-content').style.display = 'none';
             } else {
@@ -171,287 +182,123 @@
             }
         }
 
-        // פקודת מעקף למחשב (F12 -> Console)
+        // פקודת המעקף שלך ב-Console (לרשום ב-F12): allowDesktop()
         window.allowDesktop = function() {
             bypassActive = true;
             document.getElementById('desktop-blocker').style.display = 'none';
             document.getElementById('mobile-content').style.display = 'block';
-            console.log("🔓 הגישה למחשב אושרה בהצלחה בסביבת פיתוח!");
+            console.log("🔓 קוד פיתוח הופעל. מערכת הגנה במצב השבתה.");
         };
 
-        setInterval(strictDeviceCheck, 1000);
-        window.addEventListener('DOMContentLoaded', strictDeviceCheck);
+        setInterval(antiEmulationCheck, 1000);
+        window.addEventListener('DOMContentLoaded', antiEmulationCheck);
 
-        // ניהול חלונות במחשב/טלפון
-        function openWindow(id) {
+        // ניהול מעבר אפליקציות
+        function openApp(id) {
             document.getElementById(id).style.display = 'flex';
-            if(id === 'win-matrix') initMatrix(); // הפעלת המטריקס רק כשפותחים את החלון
+            if(id === 'app-audio') startAudioEngine();
+            if(id === 'app-cam') startCameraEngine();
         }
-        function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
+        function closeApp(id) {
+            document.getElementById(id).style.display = 'none';
+            if(id === 'app-audio') stopAudioEngine();
+            if(id === 'app-cam') stopCameraEngine();
+        }
 
-        // שעון חי בשורת המשימות
+        // שעון עליון
         setInterval(() => {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('he-IL');
+            document.getElementById('live-timer').innerText = now.toLocaleTimeString('he-IL');
         }, 1000);
 
-        // --- קוד אפליקציה 1: משחק חיישנים ---
-        const ball = document.getElementById('ball');
-        const startBtn = document.getElementById('start-btn');
-        const statusText = document.getElementById('status');
-        let ballX = 80, ballY = 80;
+        // --- 📡 אפליקציה 1: מנוע סאונד ותדרים (Web Audio API) ---
+        let audioCtx = null;
+        let oscillator = null;
+        let gainNode = null;
 
-        startBtn.addEventListener('click', async () => {
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permissionState = await DeviceOrientationEvent.requestPermission();
-                    if (permissionState === 'granted') { runBallGame(); }
-                } catch (e) { statusText.innerText = "דורש חיבור מאובטח HTTPS לחיישנים."; }
-            } else { runBallGame(); }
-        });
+        function startAudioEngine() {
+            const radarArea = document.getElementById('radar-area');
+            const stats = document.getElementById('audio-stats');
 
-        function runBallGame() {
-            startBtn.style.display = 'none';
-            window.addEventListener('deviceorientation', (event) => {
-                let tiltX = event.gamma;
-                let tiltY = event.beta;
-                if (tiltX === null || tiltY === null) return;
-                ballX += tiltX * 0.3;
-                ballY += (tiltY - 45) * 0.3;
-                ballX = Math.max(5, Math.min(155, ballX));
-                ballY = Math.max(5, Math.min(155, ballY));
-                ball.style.left = ballX + 'px';
-                ball.style.top = ballY + 'px';
-            });
+            radarArea.addEventListener('pointermove', handleAudioMove);
+            radarArea.addEventListener('pointerdown', handleAudioStart);
+            radarArea.addEventListener('pointerup', handleAudioStop);
+            radarArea.addEventListener('pointerleave', handleAudioStop);
         }
 
-        // --- קוד אפליקציה 2: פנס אמיתי של הטלפון ---
-        let track = null;
-        async function toggleFlashlight() {
-            const torchStatus = document.getElementById('torch-status');
-            try {
-                if (!track) {
-                    // בקשת גישה למצלמה האחורית כדי לשלוט בפלאש
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: { exact: "environment" } }
-                    });
-                    track = stream.getVideoTracks()[0];
-                    await track.applyConstraints({ advanced: [{ torch: true }] });
-                    torchStatus.innerText = "הפנס הופעל מהקוד!";
-                } else {
-                    track.stop();
-                    track = null;
-                    torchStatus.innerText = "הפנס כובא.";
-                }
-            } catch (err) {
-                torchStatus.innerText = "פנס עובד רק במכשיר אנדרואיד/iOS אמיתי ובתנאי HTTPS.";
-            }
-        }
+        function handleAudioStart(e) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (oscillator) return;
 
-        // --- קוד אפליקציה 3: אפקט מטריקס היענותי ---
-        function initMatrix() {
-            const canvas = document.getElementById('matrix-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.offsetWidth;
-            canvas.height = canvas.parentElement.offsetHeight;
-
-            const katakana = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890XYZ";
-            const alphabet = katakana.split("");
-            const fontSize = 14;
-            const columns = canvas.width / fontSize;
-            const rainDrops = Array(Math.floor(columns)).fill(1);
-
-            function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#0F0';
-                ctx.font = fontSize + 'px monospace';
-
-                for (let i = 0; i < rainDrops.length; i++) {
-                    const text = alphabet[Math.floor(Math.random() * alphabet.length)];
-                    ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
-                    if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                        rainDrops[i] = 0;
-                    }
-                    rainDrops[i]++;
-                }
-            }
-            setInterval(draw, 30);
-        }
-    </script>
-</body>
-</html>
-        
-        #desktop-blocker .sub-text {
-            font-size: 16px;
-            color: #888;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 768px) {
-            #mobile-content { display: block; }
-            #desktop-blocker { display: none !important; }
-        }
-
-        /* עיצוב אזור המשחק */
-        .game-container {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            border: 4px solid #00ffcc;
-            border-radius: 50%;
-            margin: 30px auto;
-            background: #1e1e1e;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
-            overflow: hidden;
-        }
-
-        #ball {
-            position: absolute;
-            width: 26px;
-            height: 26px;
-            background: #00ffcc;
-            border-radius: 50%;
-            top: 127px; /* מרכז מדויק */
-            left: 127px;
-            box-shadow: 0 0 10px #00ffcc;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            font-size: 18px;
-            background: #00ffcc;
-            color: #000;
-            border: none;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 255, 204, 0.4);
-        }
-    </style>
-</head>
-<body>
-
-    <div id="desktop-blocker">
-        <div>הגישה מותרת מטלפונים בלבד.</div>
-        <div class="sub-text">ERR_NOT_A_MOBILE_DEVICE</div>
-    </div>
-
-    <div id="mobile-content">
-        <h1>משחק שיווי המשקל! 🎯</h1>
-        <p>אזן את הכדור במרכז העיגול באמצעות הטיית הטלפון!</p>
-        
-        <div class="game-container">
-            <div id="ball"></div>
-        </div>
-        
-        <button id="start-btn" class="btn">הפעל משחק</button>
-        <p id="status" style="margin-top: 15px; color: #888; font-size: 14px;"></p>
-    </div>
-
-    <script>
-        let bypassActive = false; // משתנה שיקבע אם הופעלה פקודת המעקף
-
-        // פונקציית הבדיקה הקשיחה
-        function strictDeviceCheck() {
-            if (bypassActive) return; // אם המעקף פעיל, אל תחסום!
-
-            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            const isSmallScreen = window.innerWidth <= 768;
-
-            if (!isMobileUA || !isTouchDevice || !isSmallScreen) {
-                document.getElementById('desktop-blocker').style.display = 'flex';
-                document.getElementById('mobile-content').style.display = 'none';
-            } else {
-                document.getElementById('desktop-blocker').style.display = 'none';
-                document.getElementById('mobile-content').style.display = 'block';
-            }
-        }
-
-        // פקודת המעקף הסודית בשבילך למסוף (Console)!
-        // פשוט פתח F12, כנס ל-Console ותקליד: allowDesktop()
-        window.allowDesktop = function() {
-            bypassActive = true;
-            document.getElementById('desktop-blocker').style.display = 'none';
-            document.getElementById('mobile-content').style.display = 'block';
-            document.getElementById('status').innerText = "מצב מפתח פעיל (מעקף מחשב)";
-            console.log("🔓 הגישה למחשב אושרה בהצלחה!");
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
             
-            // במחשב אין חיישנים, אז נאפשר להזיז את הכדור עם העכבר לבדיקה!
-            enableMouseControl();
-        };
+            oscillator.type = 'sawtooth'; // צליל האקרים מחוספס
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.start();
+            handleAudioMove(e);
+        }
 
-        setInterval(strictDeviceCheck, 1000);
-        window.addEventListener('DOMContentLoaded', strictDeviceCheck);
+        function handleAudioMove(e) {
+            if (!oscillator) return;
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-        // --- קוד המשחק המתוקן ---
-        const ball = document.getElementById('ball');
-        const startBtn = document.getElementById('start-btn');
-        const statusText = document.getElementById('status');
+            // שינוי תדר לפי מיקום האצבע על המסך
+            const freq = Math.max(100, Math.min(1500, (x / rect.width) * 1200));
+            const volume = Math.max(0.01, Math.min(0.2, 1 - (y / rect.height)));
 
-        // מיקום מרכז העיגול (container הוא 280, כדור הוא 26 -> מרכז זה 127)
-        let ballX = 127;
-        let ballY = 127;
+            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
 
-        startBtn.addEventListener('click', async () => {
-            // בדיקה אם הדפדפן תומך בחיישנים (במיוחד ל-iOS)
-            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-                try {
-                    const permissionState = await DeviceOrientationEvent.requestPermission();
-                    if (permissionState === 'granted') {
-                        initGame();
-                    } else {
-                        statusText.innerText = "חובה לאשר גישה לחיישנים בהגדרות הדפדפן.";
-                    }
-                } catch (error) {
-                    statusText.innerText = "החיישנים דורשים חיבור מאובטח (HTTPS).";
-                }
-            } else {
-                // אנדרואיד או דפדפנים שלא דורשים אישור מיוחד
-                initGame();
+            document.getElementById('audio-stats').innerText = `FREQ: ${Math.floor(freq)}Hz // AMP: ${Math.floor(volume * 100)}%`;
+        }
+
+        function handleAudioStop() {
+            if (oscillator) {
+                oscillator.stop();
+                oscillator.disconnect();
+                oscillator = null;
+            }
+        }
+
+        function stopAudioEngine() {
+            handleAudioStop();
+        }
+
+        // --- 🎥 אפליקציה 2: מנוע המצלמה הירוקה ---
+        let camStream = null;
+        async function startCameraEngine() {
+            const video = document.getElementById('video-feed');
+            try {
+                camStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }, // מצלמה אחורית
+                    audio: false
+                });
+                video.srcObject = camStream;
+            } catch (err) {
+                console.log("המצלמה דורשת מכשיר אמיתי ופרוטוקול HTTPS מאובטח.");
+            }
+        }
+        function stopCameraEngine() {
+            if (camStream) {
+                camStream.getTracks().forEach(track => track.stop());
+                camStream = null;
+            }
+        }
+
+        // --- 📊 אפליקציה 3: עדכוני חומרה בלייב ---
+        window.addEventListener('touchmove', (e) => {
+            document.getElementById('sys-touch').innerText = `> TOUCH POINTS DETECTED: ${e.touches.length}`;
+        });
+        window.addEventListener('deviceorientation', (e) => {
+            if(e.beta) {
+                document.getElementById('sys-orient').innerText = `> ORIENTATION X: ${Math.floor(e.gamma)} | Y: ${Math.floor(e.beta)}`;
             }
         });
-
-        function initGame() {
-            startBtn.style.display = 'none';
-            statusText.innerText = "המשחק פעיל! הטה את המכשיר.";
-
-            window.addEventListener('deviceorientation', (event) => {
-                // תיקון רגישות וסינון רעשים מהחיישן
-                let tiltX = event.gamma; // שמאל/ימין (-90 עד 90)
-                let tiltY = event.beta;  // קדימה/אחורה (-180 עד 180)
-
-                if (tiltX === null || tiltY === null) {
-                    statusText.innerText = "לא מזוהים חיישני תנועה במכשיר זה.";
-                    return;
-                }
-
-                // עדכון מיקום רגיש וחלק
-                ballX += tiltX * 0.4;
-                ballY += (tiltY - 45) * 0.4; // מפחיתים 45 מעלות כי לרוב מחזיקים את הטלפון בזווית מול הפנים
-
-                // חסימת גבולות (שלא יצא מהעיגול של 280px)
-                ballX = Math.max(10, Math.min(244, ballX));
-                ballY = Math.max(10, Math.min(244, ballY));
-
-                ball.style.left = ballX + 'px';
-                ball.style.top = ballY + 'px';
-            });
-        }
-
-        // שליטה חלופית עם העכבר למחשב (מופעלת רק אחרי הפקודה במסוף)
-        function enableMouseControl() {
-            const container = document.querySelector('.game-container');
-            container.addEventListener('mousemove', (e) => {
-                const rect = container.getBoundingClientRect();
-                let mouseX = e.clientX - rect.left - 13;
-                let mouseY = e.clientY - rect.top - 13;
-                
-                ball.style.left = Math.max(10, Math.min(244, mouseX)) + 'px';
-                ball.style.top = Math.max(10, Math.min(244, mouseY)) + 'px';
-            });
-        }
     </script>
 </body>
 </html>
