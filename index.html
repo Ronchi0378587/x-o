@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>חיישן הלהיטוטים שלי</title>
+    <title>משחק שיווי משקל מובייל</title>
     <style>
         body {
             margin: 0;
@@ -11,16 +11,16 @@
             background-color: #121212;
             color: #ffffff;
             overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        /* ברירת מחדל: תוכן הטלפון מוסתר לחלוטין ברמת ה-CSS */
         #mobile-content {
             display: none;
             padding: 20px;
             text-align: center;
         }
 
-        /* מסך חסימה קשיח למחשבים */
         #desktop-blocker {
             display: flex;
             position: fixed;
@@ -41,14 +41,45 @@
             margin-top: 10px;
         }
 
-        /* רק אם המסך קטן מ-768px (טלפונים), ה-CSS מאפשר להציג את התוכן */
         @media (max-width: 768px) {
-            #mobile-content {
-                display: block;
-            }
-            #desktop-blocker {
-                display: none !important;
-            }
+            #mobile-content { display: block; }
+            #desktop-blocker { display: none !important; }
+        }
+
+        /* עיצוב אזור המשחק */
+        .game-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border: 4px solid #00ffcc;
+            border-radius: 50%;
+            margin: 30px auto;
+            background: #1e1e1e;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+            overflow: hidden;
+        }
+
+        #ball {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: #00ffcc;
+            border-radius: 50%;
+            top: 127px; /* מרכז מדויק */
+            left: 127px;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            font-size: 18px;
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 255, 204, 0.4);
         }
     </style>
 </head>
@@ -61,36 +92,119 @@
 
     <div id="mobile-content">
         <h1>משחק שיווי המשקל! 🎯</h1>
-        <p>נסה להשאיר את הכדור במרכז המסך על ידי הטיית הטלפון שלך!</p>
+        <p>אזן את הכדור במרכז העיגול באמצעות הטיית הטלפון!</p>
         
-        <div style="position: relative; width: 300px; height: 300px; border: 5px solid #fff; border-radius: 50%; margin: 30px auto; background: #222;">
-            <div id="ball" style="position: absolute; width: 30px; height: 30px; background: #00ffcc; border-radius: 50%; top: 135px; left: 135px; transition: 0.1s ease-out;"></div>
+        <div class="game-container">
+            <div id="ball"></div>
         </div>
         
-        <button id="start-btn" style="padding: 12px 24px; font-size: 18px; background: #00ffcc; color: #000; border: none; border-radius: 25px; font-weight: bold;">הפעל חיישנים</button>
-        <p id="status" style="margin-top: 15px; color: #aaa;"></p>
+        <button id="start-btn" class="btn">הפעל משחק</button>
+        <p id="status" style="margin-top: 15px; color: #888; font-size: 14px;"></p>
     </div>
 
     <script>
-        // הגנה אקטיבית מפני עקיפת F12 ומחשבים
+        let bypassActive = false; // משתנה שיקבע אם הופעלה פקודת המעקף
+
+        // פונקציית הבדיקה הקשיחה
         function strictDeviceCheck() {
+            if (bypassActive) return; // אם המעקף פעיל, אל תחסום!
+
             const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
             const isSmallScreen = window.innerWidth <= 768;
 
-            // אם מישהו במחשב ניסה למחוק את מסך החסימה ב-F12 או שינה את ה-CSS
             if (!isMobileUA || !isTouchDevice || !isSmallScreen) {
-                // מוחק פיזית את תוכן האתר מהקוד כדי שלא יוכלו לחשוף אותו!
-                const content = document.getElementById('mobile-content');
-                if (content) content.remove(); 
-                
                 document.getElementById('desktop-blocker').style.display = 'flex';
+                document.getElementById('mobile-content').style.display = 'none';
+            } else {
+                document.getElementById('desktop-blocker').style.display = 'none';
+                document.getElementById('mobile-content').style.display = 'block';
             }
         }
 
-        // הפעלת ההגנה בלולאה קצרה כדי למנוע שינויים בזמן אמת ב-DevTools
+        // פקודת המעקף הסודית בשבילך למסוף (Console)!
+        // פשוט פתח F12, כנס ל-Console ותקליד: allowDesktop()
+        window.allowDesktop = function() {
+            bypassActive = true;
+            document.getElementById('desktop-blocker').style.display = 'none';
+            document.getElementById('mobile-content').style.display = 'block';
+            document.getElementById('status').innerText = "מצב מפתח פעיל (מעקף מחשב)";
+            console.log("🔓 הגישה למחשב אושרה בהצלחה!");
+            
+            // במחשב אין חיישנים, אז נאפשר להזיז את הכדור עם העכבר לבדיקה!
+            enableMouseControl();
+        };
+
         setInterval(strictDeviceCheck, 1000);
         window.addEventListener('DOMContentLoaded', strictDeviceCheck);
+
+        // --- קוד המשחק המתוקן ---
+        const ball = document.getElementById('ball');
+        const startBtn = document.getElementById('start-btn');
+        const statusText = document.getElementById('status');
+
+        // מיקום מרכז העיגול (container הוא 280, כדור הוא 26 -> מרכז זה 127)
+        let ballX = 127;
+        let ballY = 127;
+
+        startBtn.addEventListener('click', async () => {
+            // בדיקה אם הדפדפן תומך בחיישנים (במיוחד ל-iOS)
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceOrientationEvent.requestPermission();
+                    if (permissionState === 'granted') {
+                        initGame();
+                    } else {
+                        statusText.innerText = "חובה לאשר גישה לחיישנים בהגדרות הדפדפן.";
+                    }
+                } catch (error) {
+                    statusText.innerText = "החיישנים דורשים חיבור מאובטח (HTTPS).";
+                }
+            } else {
+                // אנדרואיד או דפדפנים שלא דורשים אישור מיוחד
+                initGame();
+            }
+        });
+
+        function initGame() {
+            startBtn.style.display = 'none';
+            statusText.innerText = "המשחק פעיל! הטה את המכשיר.";
+
+            window.addEventListener('deviceorientation', (event) => {
+                // תיקון רגישות וסינון רעשים מהחיישן
+                let tiltX = event.gamma; // שמאל/ימין (-90 עד 90)
+                let tiltY = event.beta;  // קדימה/אחורה (-180 עד 180)
+
+                if (tiltX === null || tiltY === null) {
+                    statusText.innerText = "לא מזוהים חיישני תנועה במכשיר זה.";
+                    return;
+                }
+
+                // עדכון מיקום רגיש וחלק
+                ballX += tiltX * 0.4;
+                ballY += (tiltY - 45) * 0.4; // מפחיתים 45 מעלות כי לרוב מחזיקים את הטלפון בזווית מול הפנים
+
+                // חסימת גבולות (שלא יצא מהעיגול של 280px)
+                ballX = Math.max(10, Math.min(244, ballX));
+                ballY = Math.max(10, Math.min(244, ballY));
+
+                ball.style.left = ballX + 'px';
+                ball.style.top = ballY + 'px';
+            });
+        }
+
+        // שליטה חלופית עם העכבר למחשב (מופעלת רק אחרי הפקודה במסוף)
+        function enableMouseControl() {
+            const container = document.querySelector('.game-container');
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                let mouseX = e.clientX - rect.left - 13;
+                let mouseY = e.clientY - rect.top - 13;
+                
+                ball.style.left = Math.max(10, Math.min(244, mouseX)) + 'px';
+                ball.style.top = Math.max(10, Math.min(244, mouseY)) + 'px';
+            });
+        }
     </script>
 </body>
 </html>
