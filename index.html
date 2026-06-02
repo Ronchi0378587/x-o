@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>האתר שלי</title>
+    <title>חיישן הלהיטוטים שלי</title>
     <style>
-        /* עיצוב כללי של הדף */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: #121212;
+            color: #ffffff;
+            overflow: hidden;
         }
 
-        /* תוכן האתר שיוצג רק בטלפונים */
+        /* ברירת מחדל: תוכן הטלפון מוסתר לחלוטין ברמת ה-CSS */
         #mobile-content {
-            display: block;
+            display: none;
             padding: 20px;
             text-align: center;
         }
 
-        /* מסך החסימה למחשבים - כברירת מחדל הוא מוסתר */
+        /* מסך חסימה קשיח למחשבים */
         #desktop-blocker {
-            display: none;
+            display: flex;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #000; /* מסך שחור */
-            color: #ff3333; /* טקסט אדום */
-            z-index: 9999;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #000;
+            color: #ff3333;
+            z-index: 99999;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -42,43 +40,57 @@
             color: #888;
             margin-top: 10px;
         }
+
+        /* רק אם המסך קטן מ-768px (טלפונים), ה-CSS מאפשר להציג את התוכן */
+        @media (max-width: 768px) {
+            #mobile-content {
+                display: block;
+            }
+            #desktop-blocker {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 <body>
 
     <div id="desktop-blocker">
-        <div>החיבור נכשל: הגישה מותרת מטלפונים בלבד.</div>
-        <div class="sub-text">ERR_CONNECTION_REFUSED</div>
+        <div>הגישה מותרת מטלפונים בלבד.</div>
+        <div class="sub-text">ERR_NOT_A_MOBILE_DEVICE</div>
     </div>
 
     <div id="mobile-content">
-        <h1>ברוכים הבאים לאתר הנייד שלי!</h1>
-        <p>טקסט זה מופיע מכיוון שאתה גולש מהטלפון.</p>
+        <h1>משחק שיווי המשקל! 🎯</h1>
+        <p>נסה להשאיר את הכדור במרכז המסך על ידי הטיית הטלפון שלך!</p>
+        
+        <div style="position: relative; width: 300px; height: 300px; border: 5px solid #fff; border-radius: 50%; margin: 30px auto; background: #222;">
+            <div id="ball" style="position: absolute; width: 30px; height: 30px; background: #00ffcc; border-radius: 50%; top: 135px; left: 135px; transition: 0.1s ease-out;"></div>
+        </div>
+        
+        <button id="start-btn" style="padding: 12px 24px; font-size: 18px; background: #00ffcc; color: #000; border: none; border-radius: 25px; font-weight: bold;">הפעל חיישנים</button>
+        <p id="status" style="margin-top: 15px; color: #aaa;"></p>
     </div>
 
     <script>
-        function checkDevice() {
-            const blocker = document.getElementById('desktop-blocker');
-            const content = document.getElementById('mobile-content');
-            
-            // בדיקה האם המשתמש גולש ממחשב (לפי רוחב מסך או סוג מכשיר)
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        // הגנה אקטיבית מפני עקיפת F12 ומחשבים
+        function strictDeviceCheck() {
+            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
             const isSmallScreen = window.innerWidth <= 768;
 
-            // אם זה לא טלפון וגם המסך רחב (מחשב)
-            if (!isMobile && !isSmallScreen) {
-                blocker.style.display = 'flex'; // מציג את מסך החסימה
-                content.style.display = 'none';  // מסתיר את תוכן האתר
-            } else {
-                blocker.style.display = 'none';
-                content.style.display = 'block';
+            // אם מישהו במחשב ניסה למחוק את מסך החסימה ב-F12 או שינה את ה-CSS
+            if (!isMobileUA || !isTouchDevice || !isSmallScreen) {
+                // מוחק פיזית את תוכן האתר מהקוד כדי שלא יוכלו לחשוף אותו!
+                const content = document.getElementById('mobile-content');
+                if (content) content.remove(); 
+                
+                document.getElementById('desktop-blocker').style.display = 'flex';
             }
         }
 
-        // הפעלת הבדיקה בטעינת הדף ובשינוי גודל החלון
-        window.addEventListener('DOMContentLoaded', checkDevice);
-        window.addEventListener('resize', checkDevice);
+        // הפעלת ההגנה בלולאה קצרה כדי למנוע שינויים בזמן אמת ב-DevTools
+        setInterval(strictDeviceCheck, 1000);
+        window.addEventListener('DOMContentLoaded', strictDeviceCheck);
     </script>
-
 </body>
 </html>
