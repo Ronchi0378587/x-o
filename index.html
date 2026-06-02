@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚡ NEXUS_OVERRIDE_v5.1 ⚡</title>
+    <title>⚡ NEXUS_OVERRIDE_v5.2 ⚡</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
 
@@ -16,7 +16,7 @@
             user-select: none; -webkit-user-select: none;
         }
 
-        /* מסך חסימה קולנועי למחשב */
+        /* מסך חסימה קולנועי */
         #desktop-blocker {
             display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: radial-gradient(circle, #1a0005 0%, #000000 100%);
@@ -24,11 +24,13 @@
             flex-direction: column; justify-content: center; align-items: center;
             text-align: center; box-sizing: border-box; padding: 30px;
             font-family: 'Orbitron', sans-serif;
+            cursor: pointer; /* מראה שאפשר ללחוץ */
         }
         
         .warning-frame {
             border: 2px dashed #ff2244; padding: 30px; border-radius: 4px;
             background: rgba(255, 34, 68, 0.03); box-shadow: 0 0 30px rgba(255, 34, 68, 0.1);
+            pointer-events: none; /* שהקליקים יעברו ישירות למסך הראשי */
         }
 
         .glitch-title {
@@ -42,13 +44,12 @@
             100% { transform: scale(1.02); opacity: 1; text-shadow: 0 0 20px #ff2244; }
         }
 
-        /* הממשק הראשי לטלפון */
+        /* הממשק לטלפון */
         #mobile-content {
             display: none; width: 100%; height: 100%; position: relative;
             box-sizing: border-box; background: linear-gradient(180deg, #050510 0%, #010105 100%);
         }
 
-        /* סורק קווי סייבר ברקע הכללי */
         #mobile-content::before {
             content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 170, 0.06) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
@@ -66,9 +67,7 @@
             margin: 25px 0 10px 0; letter-spacing: 2px; text-shadow: 0 0 10px #00ffaa;
         }
 
-        .apps-list {
-            display: flex; flex-direction: column; gap: 18px; padding: 0 25px;
-        }
+        .apps-list { display: flex; flex-direction: column; gap: 18px; padding: 0 25px; }
 
         .cyber-card {
             background: rgba(0, 15, 10, 0.6); border: 1px solid #00ffaa;
@@ -82,7 +81,6 @@
         .cyber-card h3 { margin: 0 0 5px 0; font-size: 16px; letter-spacing: 1px; }
         .cyber-card p { margin: 0; font-size: 12px; color: #88c0a0; }
         .cyber-card:active { background: #00ffaa; color: #000; }
-        .cyber-card:active p { color: #222; }
 
         .full-app {
             display: none; position: absolute; top: 41px; left: 0; width: 100%; height: calc(100% - 41px);
@@ -97,9 +95,7 @@
             background: transparent; border: 1px solid #00ffaa; color: #00ffaa;
             padding: 2px 10px; font-family: 'Orbitron', sans-serif; cursor: pointer;
         }
-        .exit-btn:active { background: #ff2244; color: #fff; border-color: #ff2244; }
 
-        /* [01] רדאר */
         #sonar-grid {
             flex: 1; background: radial-gradient(circle, #001f15 0%, #03030c 100%);
             position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
@@ -112,14 +108,12 @@
             0% { width: 0px; height: 0px; opacity: 1; }
             100% { width: 500px; height: 500px; opacity: 0; }
         }
-
-        /* [02] מטריקס */
         #matrix-canvas { width: 100%; height: 100%; background: #000; display: block; }
     </style>
 </head>
 <body>
 
-    <div id="desktop-blocker">
+    <div id="desktop-blocker" onclick="secretBypassCheck()">
         <div class="warning-frame">
             <div class="glitch-title">SECURITY_BREACH_DETECTION</div>
             <p style="font-size: 12px; color: #aaa; margin: 15px 0 0 0; line-height: 1.5;">
@@ -127,6 +121,7 @@
                 DESKTOP ENVIRONMENT DETECTED.<br>
                 <span style="color: #ff2244; font-weight: bold;">ACCESS_DENIED_</span>
             </p>
+            <p style="font-size: 10px; color: #444; margin-top: 15px;">[SECRET_KEY_TOUCH_ACTIVE]</p>
         </div>
     </div>
 
@@ -143,12 +138,10 @@
                 <h3>[01] // רדאר תדרים קוונטי</h3>
                 <p>מייצר סינתזת גלי קול מותאמת אישית על פי קואורדינטות מגע בזמן אמת.</p>
             </div>
-
             <div class="cyber-card" onclick="launchApp('app-matrix')">
                 <h3>[02] // מפענח זרם נתונים (Matrix)</h3>
                 <p>מציג הצפנת קוד רצה עם השפעה קינטית על ידי גרירת האצבע.</p>
             </div>
-
             <div class="cyber-card" onclick="launchApp('app-diagnostic')">
                 <h3>[03] // דיאגנוסטיקת ליבה וחיישנים</h3>
                 <p>סריקה חיה של מד התאוצה ומספר נקודות המגע הפיזיות בחומרה.</p>
@@ -156,14 +149,10 @@
         </div>
 
         <div id="app-sonar" class="full-app">
-            <div class="app-top">
-                <span>QUANTUM_SONAR_STREAM</span>
-                <button class="exit-btn" onclick="killApp('app-sonar')">SHUTDOWN</button>
-            </div>
+            <div class="app-top"><span>QUANTUM_SONAR_STREAM</span><button class="exit-btn" onclick="killApp('app-sonar')">SHUTDOWN</button></div>
             <div id="sonar-grid">
                 <div class="circle-pulse" style="animation-delay: 0s;"></div>
                 <div class="circle-pulse" style="animation-delay: 1s;"></div>
-                <div class="circle-pulse" style="animation-delay: 2s;"></div>
                 <div style="pointer-events:none; text-align:center; font-size:14px; z-index:5;">
                     <p style="text-shadow: 0 0 8px #00ffaa;">גע והזז את האצבע על מסך הרדאר</p>
                     <p id="sonar-output" style="color: #ff3366; font-size:12px; margin-top:10px;">SIGNAL: IDLE</p>
@@ -172,57 +161,143 @@
         </div>
 
         <div id="app-matrix" class="full-app">
-            <div class="app-top">
-                <span>DATA_STREAM_DECRYPTER</span>
-                <button class="exit-btn" onclick="killApp('app-matrix')">SHUTDOWN</button>
-            </div>
-            <div style="flex:1; position:relative; overflow:hidden;">
-                <canvas id="matrix-canvas"></canvas>
-            </div>
+            <div class="app-top"><span>DATA_STREAM_DECRYPTER</span><button class="exit-btn" onclick="killApp('app-matrix')">SHUTDOWN</button></div>
+            <div style="flex:1; position:relative; overflow:hidden;"><canvas id="matrix-canvas"></canvas></div>
         </div>
 
         <div id="app-diagnostic" class="full-app">
-            <div class="app-top">
-                <span>HARDWARE_DIAGNOSTICS</span>
-                <button class="exit-btn" onclick="killApp('app-diagnostic')">SHUTDOWN</button>
-            </div>
+            <div class="app-top"><span>HARDWARE_DIAGNOSTICS</span><button class="exit-btn" onclick="killApp('app-diagnostic')">SHUTDOWN</button></div>
             <div style="padding: 25px; font-size:14px; line-height: 1.8; overflow-y:auto; flex:1;">
                 <p style="color: #ff3366;">> INITIALIZING SYSTEM CHECK...</p>
                 <p id="diag-touch">> PHYSICAL TOUCH CORES: 0</p>
-                <p id="diag-gyro">> HARDWARE GYRO REF: Y_AXIS_PENDING...</p>
-                <p id="diag-network">> NETWORK PROTOCOL: SECURE_SOCKET_OK</p>
-                <p style="color:#00ffaa; margin-top:20px;">> המערכת פועלת כסדרה על גבי חומרת קצה מאושרת.</p>
+                <p id="diag-gyro">> HARDWARE GYRO REF: ACCESSING...</p>
+                <p style="color:#00ffaa; margin-top:20px;">> המערכת פועלת כסדרה.</p>
             </div>
         </div>
     </div>
 
     <script>
         let isDevBypass = false;
+        let clickCount = 0;
 
-        // 🛠️ פונקציית החסימה המתוקנת, היציבה והבטוחה
+        // 🔓 פונקציית מעקף סודית בלחיצות (אם נתקעת בטלפון או במחשב!)
+        function secretBypassCheck() {
+            clickCount++;
+            if (clickCount >= 5) { // 5 לחיצות מהירות על המסך השחור פותחות הכל!
+                allowDesktop();
+            }
+            // איפוס ספירה אחרי 2 שניות שלא לחצו
+            setTimeout(() => { clickCount = 0; }, 2000);
+        }
+
+        // פונקציית החסימה הגמישה והמתוקנת
         function hardwareSecurityCheck() {
             if (isDevBypass) return;
 
-            // בדיקת User Agent סטנדרטית ואמינה למובייל
+            // בדיקה רחבה יותר למובייל (כולל מגע ומסכים רחבים של מתקפלים)
             const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            // בדיקת רוחב מסך (אם המסך גדול מ-768 פיקסלים זה כמעט בוודאות מחשב)
-            const isSmallWidth = window.innerWidth <= 768;
+            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const isSmallWidth = window.innerWidth <= 991; // הבראה למסכים גדולים/טאבלטים
 
-            // חסימה רק אם ה-User Agent מראה מחשב, או שהמסך רחב מדי
-            if (!isMobileUA || !isSmallWidth) {
-                document.getElementById('desktop-blocker').style.display = 'flex';
-                document.getElementById('mobile-content').style.display = 'none';
-            } else {
+            // אם זה מכשיר תומך מגע וגם הרוחב הגיוני, או שזה UA מובהק של נייד
+            if (isMobileUA || (isTouch && isSmallWidth)) {
                 document.getElementById('desktop-blocker').style.display = 'none';
                 document.getElementById('mobile-content').style.display = 'block';
+            } else {
+                document.getElementById('desktop-blocker').style.display = 'flex';
+                document.getElementById('mobile-content').style.display = 'none';
             }
         }
 
-        // 🔓 פקודת המעקף ל-Console במחשב: allowDesktop()
+        // פקודת המעקף הרשמית (עובדת גם מהקונסול `allowDesktop()` וגם מהלחיצות)
         window.allowDesktop = function() {
             isDevBypass = true;
             document.getElementById('desktop-blocker').style.display = 'none';
+            document.getElementById('mobile-content').style.display = 'block';
+            console.log("🔓 SYSTEM OVERRIDE: ACTIVE");
+        };
+
+        hardwareSecurityCheck();
+        window.addEventListener('resize', hardwareSecurityCheck);
+
+        // ניהול אפליקציות
+        function launchApp(id) {
+            document.getElementById(id).style.display = 'flex';
+            if (id === 'app-sonar') initSonarEngine();
+            if (id === 'app-matrix') initMatrixEngine();
+        }
+        function killApp(id) {
+            document.getElementById(id).style.display = 'none';
+            if (id === 'app-sonar') shutdownSonarEngine();
+            if (id === 'app-matrix') shutdownMatrixEngine();
+        }
+
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('he-IL');
+        }, 1000);
+
+        // מנוע רדאר קולי
+        let synthCtx = null, osc = null, amp = null;
+        function initSonarEngine() {
+            const grid = document.getElementById('sonar-grid');
+            grid.addEventListener('pointermove', moveSonar);
+            grid.addEventListener('pointerdown', startSonar);
+            grid.addEventListener('pointerup', stopSonar);
+            grid.addEventListener('pointerleave', stopSonar);
+        }
+        function startSonar(e) {
+            if (!synthCtx) synthCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (osc) return;
+            osc = synthCtx.createOscillator(); amp = synthCtx.createGain();
+            osc.type = 'triangle'; osc.connect(amp); amp.connect(synthCtx.destination);
+            osc.start(); moveSonar(e);
+        }
+        function moveSonar(e) {
+            if (!osc) return;
+            const bounds = e.currentTarget.getBoundingClientRect();
+            const freq = Math.max(80, Math.min(1200, ((e.clientX - bounds.left) / bounds.width) * 1000));
+            const vol = Math.max(0.02, Math.min(0.25, 1 - ((e.clientY - bounds.top) / bounds.height)));
+            osc.frequency.setValueAtTime(freq, synthCtx.currentTime);
+            amp.gain.setValueAtTime(vol, synthCtx.currentTime);
+            document.getElementById('sonar-output').innerText = `FREQ: ${Math.floor(freq)}Hz // VOL: ${Math.floor(vol * 100)}%`;
+        }
+        function stopSonar() { if (osc) { osc.stop(); osc.disconnect(); osc = null; } }
+        function shutdownSonarEngine() { stopSonar(); }
+
+        // מנוע מטריקס
+        let matrixInterval = null;
+        function initMatrixEngine() {
+            const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight;
+            const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$@&*%".split("");
+            const font_size = 14; const drops = Array(Math.floor(canvas.width / font_size)).fill(1);
+            let touchX = -999;
+            canvas.addEventListener('touchmove', (e) => { touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left; });
+            canvas.addEventListener('touchend', () => touchX = -999);
+
+            matrixInterval = setInterval(() => {
+                ctx.fillStyle = 'rgba(3, 3, 12, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < drops.length; i++) {
+                    ctx.fillStyle = Math.abs((i * font_size) - touchX) < 40 ? '#ffffff' : '#00ffaa';
+                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * font_size, drops[i] * font_size);
+                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }, 33);
+        }
+        function shutdownMatrixEngine() { clearInterval(matrixInterval); }
+
+        // דיאגנוסטיקה
+        window.addEventListener('touchmove', (e) => {
+            const t = document.getElementById('diag-touch'); if(t) t.innerText = `> PHYSICAL TOUCH CORES: ${e.touches.length} ACTIVE`;
+        });
+        window.addEventListener('deviceorientation', (e) => {
+            const g = document.getElementById('diag-gyro'); if(g && e.beta) g.innerText = `> HARDWARE GYRO: X[${Math.floor(e.gamma)}°] | Y[${Math.floor(e.beta)}°]`;
+        });
+    </script>
+</body>
+</html>
+p-blocker').style.display = 'none';
             document.getElementById('mobile-content').style.display = 'block';
             console.log("🔓 SYSTEM OVERRIDE: מצב מפתח מאושר.");
         };
