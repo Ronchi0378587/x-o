@@ -2,38 +2,285 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>משחק שיווי משקל מובייל</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>מערכת הפעלה לנייד - PhoneOS</title>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+        /* עיצוב בסיסי של שולחן עבודה */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle, #251c4a 0%, #0b071a 100%);
             overflow: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        #mobile-content {
-            display: none;
-            padding: 20px;
-            text-align: center;
+            color: white;
+            user-select: none; -webkit-user-select: none;
         }
 
         #desktop-blocker {
-            display: flex;
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #000;
-            color: #ff3333;
-            z-index: 99999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
+            display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #000; color: #ff3333; z-index: 99999;
+            flex-direction: column; justify-content: center; align-items: center;
+            font-size: 24px; font-weight: bold;
         }
+        #desktop-blocker .sub-text { font-size: 16px; color: #888; margin-top: 10px; }
+
+        #mobile-content { display: none; width: 100%; height: 100%; position: relative; }
+
+        @media (max-width: 768px) {
+            #mobile-content { display: block; }
+            #desktop-blocker { display: none !important; }
+        }
+
+        /* אייקונים על שולחן העבודה */
+        .icon-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+            padding: 20px; max-width: 300px;
+        }
+        .desktop-icon {
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            cursor: pointer; background: rgba(255, 255, 255, 0.05); padding: 10px;
+            border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .desktop-icon:active { background: rgba(255, 255, 255, 0.2); }
+        .desktop-icon span { font-size: 30px; margin-bottom: 5px; }
+        .desktop-icon p { margin: 0; font-size: 12px; font-weight: 500; }
+
+        /* מערכת חלונות */
+        .window {
+            display: none; position: absolute; top: 15%; left: 5%; width: 90%; height: 60%;
+            background: #1a1a24; border: 2px solid #3b3b4f; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; flex-direction: column;
+            overflow: hidden;
+        }
+        .window-header {
+            background: #252538; padding: 10px; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #3b3b4f;
+        }
+        .window-title { font-size: 14px; font-weight: bold; margin-right: 5px; }
+        .close-btn {
+            background: #ff5555; border: none; width: 20px; height: 20px;
+            border-radius: 50%; color: white; font-weight: bold; font-size: 12px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .window-content { padding: 15px; flex: 1; overflow-y: auto; text-align: center; }
+
+        /* עיצוב שורת המשימות (Taskbar) בתחתית */
+        .taskbar {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
+            background: rgba(15, 15, 25, 0.8); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .live-clock { font-size: 14px; font-weight: bold; color: #00ffcc; }
+
+        /* סגנון משחק הכדור */
+        .game-container {
+            position: relative; width: 180px; height: 180px; border: 3px solid #00ffcc;
+            border-radius: 50%; margin: 10px auto; background: #111; overflow: hidden;
+        }
+        #ball {
+            position: absolute; width: 20px; height: 20px; background: #00ffcc;
+            border-radius: 50%; top: 80px; left: 80px; box-shadow: 0 0 10px #00ffcc;
+        }
+
+        /* סגנון המטריקס */
+        #matrix-canvas { width: 100%; height: 100%; display: block; background: black; }
+    </style>
+</head>
+<body>
+
+    <div id="desktop-blocker">
+        <div>הגישה מותרת מטלפונים בלבד.</div>
+        <div class="sub-text">ERR_NOT_A_MOBILE_DEVICE</div>
+    </div>
+
+    <div id="mobile-content">
+        
+        <div class="icon-grid">
+            <div class="desktop-icon" onclick="openWindow('win-game')">
+                <span>🎯</span>
+                <p>איזון כדור</p>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-torch')">
+                <span>🔦</span>
+                <p>פלאש האקר</p>
+            </div>
+            <div class="desktop-icon" onclick="openWindow('win-matrix')">
+                <span>💻</span>
+                <p>קוד מטריקס</p>
+            </div>
+        </div>
+
+        <div id="win-game" class="window">
+            <div class="window-header">
+                <span class="window-title">משחק איזון חיישנים</span>
+                <button class="close-btn" onclick="closeWindow('win-game')">X</button>
+            </div>
+            <div class="window-content">
+                <div class="game-container"><div id="ball"></div></div>
+                <button id="start-btn" style="padding: 8px 16px; background:#00ffcc; border:none; border-radius:5px; font-weight:bold;">הפעל חיישנים</button>
+                <p id="status" style="font-size:12px; color:#aaa;"></p>
+            </div>
+        </div>
+
+        <div id="win-torch" class="window">
+            <div class="window-header">
+                <span class="window-title">פריצת חומרה: פנס</span>
+                <button class="close-btn" onclick="closeWindow('win-torch')">X</button>
+            </div>
+            <div class="window-content">
+                <p>השתמש בפקודת מערכת כדי להפעיל את הפלאש של המצלמה!</p>
+                <button onclick="toggleFlashlight()" style="padding: 15px 30px; font-size:18px; background:#ffaa00; border:none; border-radius:10px; font-weight:bold; color:black; cursor:pointer; margin-top:10px;">הדלק/כבה פנס 💡</button>
+                <p id="torch-status" style="font-size:12px; color:#888; margin-top:10px;"></p>
+            </div>
+        </div>
+
+        <div id="win-matrix" class="window" style="height: 70%;">
+            <div class="window-header">
+                <span class="window-title">Terminal - Matrix Code</span>
+                <button class="close-btn" onclick="closeWindow('win-matrix')">X</button>
+            </div>
+            <div class="window-content" style="padding:0; overflow:hidden;">
+                <canvas id="matrix-canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="taskbar">
+            <div style="font-weight: bold; color: #00ffcc;">⚡ PhoneOS</div>
+            <div class="live-clock" id="clock">00:00:00</div>
+        </div>
+
+    </div>
+
+    <script>
+        let bypassActive = false;
+
+        // הגנת מכשיר
+        function strictDeviceCheck() {
+            if (bypassActive) return;
+            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            const isSmallScreen = window.innerWidth <= 768;
+
+            if (!isMobileUA || !isTouchDevice || !isSmallScreen) {
+                document.getElementById('desktop-blocker').style.display = 'flex';
+                document.getElementById('mobile-content').style.display = 'none';
+            } else {
+                document.getElementById('desktop-blocker').style.display = 'none';
+                document.getElementById('mobile-content').style.display = 'block';
+            }
+        }
+
+        // פקודת מעקף למחשב (F12 -> Console)
+        window.allowDesktop = function() {
+            bypassActive = true;
+            document.getElementById('desktop-blocker').style.display = 'none';
+            document.getElementById('mobile-content').style.display = 'block';
+            console.log("🔓 הגישה למחשב אושרה בהצלחה בסביבת פיתוח!");
+        };
+
+        setInterval(strictDeviceCheck, 1000);
+        window.addEventListener('DOMContentLoaded', strictDeviceCheck);
+
+        // ניהול חלונות במחשב/טלפון
+        function openWindow(id) {
+            document.getElementById(id).style.display = 'flex';
+            if(id === 'win-matrix') initMatrix(); // הפעלת המטריקס רק כשפותחים את החלון
+        }
+        function closeWindow(id) { document.getElementById(id).style.display = 'none'; }
+
+        // שעון חי בשורת המשימות
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('he-IL');
+        }, 1000);
+
+        // --- קוד אפליקציה 1: משחק חיישנים ---
+        const ball = document.getElementById('ball');
+        const startBtn = document.getElementById('start-btn');
+        const statusText = document.getElementById('status');
+        let ballX = 80, ballY = 80;
+
+        startBtn.addEventListener('click', async () => {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceOrientationEvent.requestPermission();
+                    if (permissionState === 'granted') { runBallGame(); }
+                } catch (e) { statusText.innerText = "דורש חיבור מאובטח HTTPS לחיישנים."; }
+            } else { runBallGame(); }
+        });
+
+        function runBallGame() {
+            startBtn.style.display = 'none';
+            window.addEventListener('deviceorientation', (event) => {
+                let tiltX = event.gamma;
+                let tiltY = event.beta;
+                if (tiltX === null || tiltY === null) return;
+                ballX += tiltX * 0.3;
+                ballY += (tiltY - 45) * 0.3;
+                ballX = Math.max(5, Math.min(155, ballX));
+                ballY = Math.max(5, Math.min(155, ballY));
+                ball.style.left = ballX + 'px';
+                ball.style.top = ballY + 'px';
+            });
+        }
+
+        // --- קוד אפליקציה 2: פנס אמיתי של הטלפון ---
+        let track = null;
+        async function toggleFlashlight() {
+            const torchStatus = document.getElementById('torch-status');
+            try {
+                if (!track) {
+                    // בקשת גישה למצלמה האחורית כדי לשלוט בפלאש
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: { exact: "environment" } }
+                    });
+                    track = stream.getVideoTracks()[0];
+                    await track.applyConstraints({ advanced: [{ torch: true }] });
+                    torchStatus.innerText = "הפנס הופעל מהקוד!";
+                } else {
+                    track.stop();
+                    track = null;
+                    torchStatus.innerText = "הפנס כובא.";
+                }
+            } catch (err) {
+                torchStatus.innerText = "פנס עובד רק במכשיר אנדרואיד/iOS אמיתי ובתנאי HTTPS.";
+            }
+        }
+
+        // --- קוד אפליקציה 3: אפקט מטריקס היענותי ---
+        function initMatrix() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+
+            const katakana = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890XYZ";
+            const alphabet = katakana.split("");
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const rainDrops = Array(Math.floor(columns)).fill(1);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#0F0';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < rainDrops.length; i++) {
+                    const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+                    ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                    if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        rainDrops[i] = 0;
+                    }
+                    rainDrops[i]++;
+                }
+            }
+            setInterval(draw, 30);
+        }
+    </script>
+</body>
+</html>
         
         #desktop-blocker .sub-text {
             font-size: 16px;
