@@ -13,7 +13,7 @@
             --border-color: #d0d7de;
         }
 
-        /* ערכת נושא כהה/סייבר אופציונלית */
+        /* ערכת נושא אוטומטית ללילה */
         .dark-theme {
             --bg-color: #0d0e15;
             --card-bg: #141622;
@@ -44,10 +44,9 @@
         #mobile-content {
             display: none; box-sizing: border-box; padding: 20px;
             flex-direction: column; gap: 15px; max-width: 500px; margin: 0 auto;
-            padding-bottom: 5px;
+            padding-bottom: 30px;
         }
 
-        /* כרטיסי פיצ'רים מעוצבים */
         .feature-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 12px; padding: 20px;
@@ -57,14 +56,12 @@
         .feature-card h3 { margin: 0 0 10px 0; font-size: 18px; color: var(--accent-color); }
         .feature-card p { margin: 0 0 15px 0; font-size: 14px; opacity: 0.8; line-height: 1.4; }
 
-        /* כפתורים מודרניים */
         .btn {
             background-color: var(--accent-color); color: #ffffff; border: none;
             padding: 12px 20px; font-size: 14px; font-weight: 600;
             border-radius: 6px; cursor: pointer; width: 100%; box-sizing: border-box;
-            transition: background 0.2s;
         }
-        body.dark-theme .btn { color: #000000; } /* התאמת צבע טקסט בניתוב ניאון */
+        body.dark-theme .btn { color: #000000; }
         .btn:active { opacity: 0.85; }
         .btn-secondary { background-color: #24292f; margin-top: 8px; color: white !important; }
 
@@ -78,20 +75,19 @@
             background: #1f2328; width: 100%; height: 130px; display: block;
         }
 
-        /* עיצוב המצפן */
-        .compass-container {
-            width: 100px; height: 100px; border: 2px dashed var(--accent-color);
+        /* עיצוב הפלס / כוונת תלת מימד */
+        .leveler-container {
+            width: 120px; height: 120px; border: 2px solid var(--border-color);
             border-radius: 50%; margin: 10px auto; position: relative;
-            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: center;
         }
-        .compass-arrow {
-            width: 4px; height: 70px; background: #ff4a4a; position: absolute;
-            border-radius: 2px; transition: transform 0.1s ease-out;
+        .leveler-center {
+            width: 10px; height: 10px; border: 2px solid var(--accent-color); border-radius: 50%;
         }
-        .compass-arrow::before {
-            content: ''; position: absolute; top: 0; left: -4px; 
-            border-left: 6px solid transparent; border-right: 6px solid transparent;
-            border-bottom: 10px solid #ff4a4a;
+        #leveler-bubble {
+            width: 16px; height: 16px; background: #ff4a4a; border-radius: 50%;
+            position: absolute; top: 52px; left: 52px;
+            transition: all 0.05s ease-out; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -103,37 +99,42 @@
     </div>
 
     <div id="mobile-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+        <div style="text-align: center; margin-bottom: 5px;">
             <h2 style="margin: 0; font-size: 24px;">לוח בקרה לנייד 📱</h2>
-            <button class="btn" style="width: auto; padding: 6px 12px; font-size: 12px;" onclick="toggleTheme()">החלף עיצוב 🎨</button>
+            <div id="theme-status" style="font-size: 12px; opacity: 0.6; margin-top: 5px;">עיצוב אוטומטי מבוסס זמן חומרה</div>
+        </div>
+
+        <div class="feature-card">
+            <h3>📐 פלס דיגיטלי חזותי (3D Tilt)</h3>
+            <p>הבועה האדומה זזה בזמן אמת לפי הזווית שבה אתה מחזיק את הטלפון באוויר (משתמש במד התאוצה הפיזי).</p>
+            <div class="leveler-container">
+                <div class="leveler-center"></div>
+                <div id="leveler-bubble"></div>
+            </div>
+            <button class="btn btn-secondary" style="font-size:12px; padding:6px;" onclick="requestGyroPermission()">סנכרן חיישן תנועה</button>
+        </div>
+
+        <div class="feature-card">
+            <h3>🔍 זכוכית מגדלת דיגיטלית</h3>
+            <p>הפעל את המצלמה האחורית והשתמש במד הזום כדי להגדיל חפצים קטנים בלייב.</p>
+            <button class="btn" onclick="toggleCamera()">פתח / סגור מצלמה</button>
+            <div id="zoom-controls" style="display:none; margin-top:10px; text-align:center;">
+                <label style="font-size:12px;">מצב זום: </label>
+                <input type="range" id="camera-zoom" min="1" max="5" step="0.1" value="1" style="width:70%; vertical-align:middle;">
+            </div>
+            <video id="camera-feed" autoplay playsinline muted></video>
         </div>
         
         <div class="feature-card">
             <h3>🗣️ הקלדה קולית (Speech-to-Text)</h3>
-            <p>לחץ על הכפתור ודבר אל המכשיר. הדפדפן ישתמש במנוע הדיבור המובנה כדי לתרגם אותך לטקסט.</p>
+            <p>לחץ על הכפתור ודבר אל המכשיר. הדפדפן יתרגם אותך לטקסט חי בעברית.</p>
             <button class="btn" id="speech-btn" onclick="startSpeechRecognition()">התחל הקלטה קולית 🎙️</button>
             <div id="speech-output" style="margin-top:10px; font-size:14px; font-style:italic; min-height:20px; color:var(--accent-color);"></div>
         </div>
 
         <div class="feature-card">
-            <h3>🧭 מצפן כיוון בזמן אמת</h3>
-            <p>האתר מתחבר למגנטומטר הפנימי של הטלפון ומסובב את החץ בהתאם לתנועה הפיזית שלך במרחב.</p>
-            <div class="compass-container">
-                <div class="compass-arrow" id="compass"></div>
-            </div>
-            <button class="btn btn-secondary" style="font-size:12px; padding:6px;" onclick="requestCompassPermission()">הפעל / אמת מצפן</button>
-        </div>
-
-        <div class="feature-card">
-            <h3>🌓 התאמת תאורת סביבה חכמה</h3>
-            <p>ניתוח חכם של מצב התאורה בחדר באמצעות המצלמה כדי להתאים את תצוגת האתר אוטומטית.</p>
-            <button class="btn" onclick="analyzeAmbientLight()">סרוק תאורת חדר 👁️</button>
-            <div id="light-status" style="margin-top:8px; font-size:12px; text-align:center;"></div>
-        </div>
-
-        <div class="feature-card">
             <h3>🔋 נתוני סוללה חכמים</h3>
-            <p>קריאה ישירה של אחוז הסוללה ומצב הטעינה של החומרה הפנימית.</p>
+            <p>קריאה ישירה של אחוז הסוללה ומצב הטעינה הנוכחי של החומרה.</p>
             <div id="battery-display" style="font-size: 15px; font-weight: bold; text-align: center;">
                 טוען נתוני סוללה...
             </div>
@@ -141,23 +142,16 @@
 
         <div class="feature-card">
             <h3>📳 תגובת רטט (Haptic)</h3>
-            <p>שליטה ברכיב הרטט הפנימי של הטלפון ליצירת משוב פיזי (לא זמין במחשבים).</p>
+            <p>שליטה ברכיב הרטט הפנימי של הטלפון ליצירת משוב פיזי בלחיצה.</p>
             <button class="btn" onclick="triggerVibration(100)">רטט קצר ⚡</button>
             <button class="btn btn-secondary" onclick="triggerVibration([100, 50, 100, 50, 300])">דופק לב 💓</button>
         </div>
 
         <div class="feature-card">
-            <h3>🎨 משטח מגע וגרפיקה קינטית</h3>
-            <p>זיהוי מחוות האצבע על מערך המגע לציור חופשי.</p>
+            <h3>🎨 משטח מגע וציור חופשי</h3>
+            <p>זיהוי מחוות האצבע על מערך המגע לציור מהיר.</p>
             <canvas id="paint-canvas"></canvas>
             <button class="btn btn-secondary" style="padding: 6px; font-size: 12px;" onclick="clearCanvas()">נקה לוח</button>
-        </div>
-
-        <div class="feature-card">
-            <h3>📷 עדשת מצלמה חיה</h3>
-            <p>הזרמת וידאו מקומית ומאובטחת מהעדשה האחורית של המכשיר.</p>
-            <button class="btn" onclick="toggleCamera()">פתח / סגור מצלמה</button>
-            <video id="camera-feed" autoplay playsinline muted></video>
         </div>
 
         <div class="feature-card">
@@ -183,9 +177,10 @@
             } else {
                 document.getElementById('desktop-blocker').style.display = 'none';
                 document.getElementById('mobile-content').style.display = 'flex';
+                applyAutomaticTheme(); // החלת ערכת נושא אוטומטית לפי זמן
                 initCanvasEngine();
                 initBatteryEngine();
-                initCompassEngine();
+                initGyroEngine();
             }
         }
 
@@ -194,28 +189,103 @@
             isBypass = true;
             document.getElementById('desktop-blocker').style.display = 'none';
             document.getElementById('mobile-content').style.display = 'flex';
+            applyAutomaticTheme();
             initCanvasEngine();
             initBatteryEngine();
-            initCompassEngine();
+            initGyroEngine();
             console.log("🔓 גישת מפתח אושרה בהצלחה.");
         };
 
         window.addEventListener('DOMContentLoaded', checkDevice);
 
-        // בורר ערכות נושא
-        function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
+        // 🌓 החלפת עיצוב אוטומטית לפי שעות היממה (חומרה וזמן)
+        function applyAutomaticTheme() {
+            const hour = new Date().getHours();
+            const isNight = hour >= 19 || hour < 6; // בין 19:00 בערב ל-6:00 בבוקר
+            const statusText = document.getElementById('theme-status');
+            
+            if (isNight) {
+                document.body.classList.add('dark-theme');
+                statusText.innerText = "עיצוב אוטומטי: מצב לילה פעיל 🌙";
+            } else {
+                document.body.classList.remove('dark-theme');
+                statusText.innerText = "עיצוב אוטומטי: מצב יום פעיל ☀️";
+            }
         }
 
-        // --- קוד פיצ'ר 1: זיהוי דיבור (Speech Recognition) ---
+        // --- קוד פיצ'ר 1: מנוע פלס דיגיטלי (מד תאוצה) ---
+        function initGyroEngine() {
+            window.addEventListener('deviceorientation', (e) => {
+                const bubble = document.getElementById('leveler-bubble');
+                if (!bubble) return;
+                
+                let x = e.gamma; // שמאל/ימין (-90 עד 90)
+                let y = e.beta;  // קדימה/אחורה (-180 עד 180)
+
+                if (x === null || y === null) return;
+
+                // נרמול הערכים כדי להזיז את הבועה בתוך המיכל (מיכל של 120px, בועה 16px -> מרכז זה 52px)
+                // נניח מקסימום הטיה רלוונטית של 30 מעלות לכל כיוון
+                let moveX = 52 + (x * 1.5);
+                let moveY = 52 + ((y - 45) * 1.5); // פיצוי זווית החזקה מול הפנים
+
+                // הגבלת תנועה בתוך העיגול
+                moveX = Math.max(5, Math.min(100, moveX));
+                moveY = Math.max(5, Math.min(100, moveY));
+
+                bubble.style.left = moveX + 'px';
+                bubble.style.top = moveY + 'px';
+            });
+        }
+        function requestGyroPermission() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(state => {
+                    if (state === 'granted') initGyroEngine();
+                });
+            } else { initGyroEngine(); }
+        }
+
+        // --- קוד פיצ'ר 2: מצלמה מתקדמת עם בקרת זום ---
+        let streamTrack = null;
+        async function toggleCamera() {
+            const video = document.getElementById('camera-feed');
+            const zoomControls = document.getElementById('zoom-controls');
+            const zoomSlider = document.getElementById('camera-zoom');
+
+            if (streamTrack) {
+                streamTrack.stop(); streamTrack = null;
+                video.style.display = 'none'; zoomControls.style.display = 'none'; return;
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "environment" }, audio: false 
+                });
+                video.srcObject = stream; video.style.display = 'block';
+                streamTrack = stream.getVideoTracks()[0];
+
+                // בדיקה אם המצלמה של הטלפון הספציפי תומכת בזום דרך הדפדפן
+                const capabilities = streamTrack.getCapabilities();
+                if (capabilities.zoom) {
+                    zoomControls.style.display = 'block';
+                    zoomSlider.min = capabilities.zoom.min;
+                    zoomSlider.max = capabilities.zoom.max;
+                    zoomSlider.step = capabilities.zoom.step;
+                    zoomSlider.value = capabilities.zoom.current || 1;
+                    
+                    zoomSlider.oninput = async () => {
+                        await streamTrack.applyConstraints({ advanced: [{ zoom: zoomSlider.value }] });
+                    };
+                }
+            } catch (err) { alert("המצלמה דורשת מכשיר טלפון אמיתי וחיבור מאובטח (HTTPS)."); }
+        }
+
+        // --- קוד פיצ'ר 3: זיהוי דיבור ---
         function startSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("זיהוי קולי לא נתמך בדפדפן זה (מומלץ להשתמש ב-Google Chrome).");
-                return;
-            }
+            if (!SpeechRecognition) { alert("זיהוי קולי לא נתמך בדפדפן זה."); return; }
+            
             const recognition = new SpeechRecognition();
-            recognition.lang = 'he-IL'; // זיהוי בשפה העברית!
+            recognition.lang = 'he-IL';
             const output = document.getElementById('speech-output');
             const btn = document.getElementById('speech-btn');
 
@@ -223,72 +293,27 @@
             recognition.start();
 
             recognition.onresult = function(event) {
-                const textResult = event.results[0][0].transcript;
-                output.innerText = `נשמע כמו: "${textResult}"`;
+                output.innerText = `נשמע כמו: "${event.results[0][0].transcript}"`;
                 btn.innerText = "התחל הקלטה קולית 🎙️";
             };
-
             recognition.onerror = function() {
                 output.innerText = "לא הצלחתי לשמוע בבירור, נסה שנית.";
                 btn.innerText = "התחל הקלטה קולית 🎙️";
             };
         }
 
-        // --- קוד פיצ'ר 2: מצפן דיגיטלי ---
-        function initCompassEngine() {
-            window.addEventListener('deviceorientationabsolute', handleCompass, true);
-            window.addEventListener('deviceorientation', handleCompass, true);
-        }
-        function handleCompass(e) {
-            let heading = e.webkitCompassHeading || Math.abs(e.alpha - 360);
-            if (heading) {
-                document.getElementById('compass').style.transform = `rotate(${-heading}deg)`;
-            }
-        }
-        function requestCompassPermission() {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission().then(state => {
-                    if(state === 'granted') initCompassEngine();
-                });
-            } else { initCompassEngine(); }
-        }
-
-        // --- קוד פיצ'ר 3: סורק תאורת חדר ---
-        async function analyzeAmbientLight() {
-            const status = document.getElementById('light-status');
-            status.innerText = "מנתח רמות אור מהחיישן...";
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
-                setTimeout(() => {
-                    // יצירת מנגנון דגימה קטן לבדיקת הבהירות של המצלמה הקדמית
-                    document.body.classList.add('dark-theme'); // החלפה למצב כהה כדוגמה
-                    status.innerText = "רמת האור זוהתה. המערכת עברה למצב לילה אוטומטי!";
-                    stream.getTracks().forEach(t => t.stop());
-                }, 1500);
-            } catch(e) {
-                status.innerText = "חיישן תאורה זמין רק תחת פרוטוקול HTTPS מאובטח.";
-            }
-        }
-
-        // --- קוד פיצ'ר 4: מד סוללה חכם ---
+        // --- קוד פיצ'ר 4: מד סוללה ---
         function initBatteryEngine() {
             if (navigator.getBattery) {
                 navigator.getBattery().then(battery => {
                     function updateBatteryInfo() {
-                        const level = Math.floor(battery.level * 100);
-                        const charging = battery.charging ? "🔌 בטעינה" : "🔋 בפריקה";
-                        document.getElementById('battery-display').innerText = `מצב: ${level}% (${charging})`;
+                        document.getElementById('battery-display').innerText = `מצב: ${Math.floor(battery.level * 100)}% (${battery.charging ? "🔌 בטעינה" : "🔋 בפריקה"})`;
                     }
                     updateBatteryInfo();
                     battery.addEventListener('levelchange', updateBatteryInfo);
                     battery.addEventListener('chargingchange', updateBatteryInfo);
                 });
-            } else {
-                document.getElementById('battery-display').innerText = "נתוני סוללה לא נתמכים בדפדפן זה.";
-            }
+            } else { document.getElementById('battery-display').innerText = "נתוני סוללה לא נתמכים בדפדפן זה."; }
         }
 
         // --- קוד פיצ'ר 5: הפעלת רטט ---
@@ -296,59 +321,33 @@
             if (navigator.vibrate) navigator.vibrate(pattern);
         }
 
-        // --- קוד פיצ'ר 6: מנוע הציור במגע ---
+        // --- קוד פיצ'ר 6: מנוע הציור ---
         const canvas = document.getElementById('paint-canvas');
         const ctx = canvas.getContext('2d');
         let drawing = false;
 
         function initCanvasEngine() {
-            canvas.width = canvas.parentElement.offsetWidth - 40;
-            canvas.height = 130;
-            ctx.strokeStyle = '#0969da';
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
+            canvas.width = canvas.parentElement.offsetWidth - 40; canvas.height = 130;
+            ctx.lineWidth = 4; ctx.lineCap = 'round';
 
             canvas.addEventListener('touchstart', (e) => {
-                drawing = true;
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                ctx.beginPath();
-                ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                drawing = true; const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
+                ctx.beginPath(); ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
             });
             canvas.addEventListener('touchmove', (e) => {
-                if (!drawing) return;
-                e.preventDefault();
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
+                if (!drawing) return; e.preventDefault();
+                const touch = e.touches[0]; const rect = canvas.getBoundingClientRect();
                 ctx.strokeStyle = document.body.classList.contains('dark-theme') ? '#00ffaa' : '#0969da';
-                ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-                ctx.stroke();
+                ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top); ctx.stroke();
             });
             canvas.addEventListener('touchend', () => drawing = false);
         }
         function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-        // --- קוד פיצ'ר 7: הפעלת מצלמה ---
-        let streamTrack = null;
-        async function toggleCamera() {
-            const video = document.getElementById('camera-feed');
-            if (streamTrack) {
-                streamTrack.stop(); streamTrack = null;
-                video.style.display = 'none'; return;
-            }
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-                video.srcObject = stream; video.style.display = 'block';
-                streamTrack = stream.getVideoTracks()[0];
-            } catch (err) { alert("המצלמה דורשת מכשיר אמיתי וחיבור מאובטח (HTTPS)."); }
-        }
-
-        // --- קוד פיצ'ר 8: שיתוף מערכת ---
+        // --- קוד פיצ'ר 7: שיתוף ---
         async function shareWebsite() {
             if (navigator.share) {
-                try {
-                    await navigator.share({ title: 'האתר שלי', text: 'כנסו לראות את האתר הנייד החדש שלי!', url: window.location.href });
-                } catch (err) {}
+                try { await navigator.share({ title: 'האתר שלי', text: 'כנסו לראות את האתר הנייד שלי!', url: window.location.href }); } catch (e) {}
             } else { alert("שיתוף חומרתי נתמך רק בניידים."); }
         }
     </script>
