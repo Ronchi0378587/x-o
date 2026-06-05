@@ -26,6 +26,7 @@
         #mobile-content {
             display: none; box-sizing: border-box; padding: 20px;
             flex-direction: column; gap: 15px; max-width: 500px; margin: 0 auto;
+            padding-bottom: 40px;
         }
 
         /* כרטיסי פיצ'רים מעוצבים */
@@ -40,7 +41,7 @@
         /* כפתורים מודרניים */
         .btn {
             background-color: #0969da; color: #ffffff; border: none;
-            padding: 10px 20px; font-size: 14px; font-weight: 600;
+            padding: 12px 20px; font-size: 14px; font-weight: 600;
             border-radius: 6px; cursor: pointer; width: 100%; box-sizing: border-box;
         }
         .btn:active { background-color: #0c61c9; }
@@ -49,6 +50,12 @@
         #camera-feed {
             width: 100%; max-height: 200px; background: #000; 
             border-radius: 6px; display: none; margin-top: 10px; object-fit: cover;
+        }
+
+        /* אזור ציור */
+        #paint-canvas {
+            border: 1px solid #d0d7de; border-radius: 6px;
+            background: #1f2328; width: 100%; height: 150px; display: block;
         }
     </style>
 </head>
@@ -63,10 +70,25 @@
         <h2 style="margin: 10px 0; font-size: 24px; text-align: center;">לוח בקרה לנייד 📱</h2>
         
         <div class="feature-card">
-            <h3>📍 שירותי מיקום מתקדמים</h3>
-            <p>האתר ניגש לרכיב ה-GPS הפנימי של הטלפון כדי להפיק מיקוד מדויק בזמן אמת.</p>
-            <button class="btn" onclick="getLocation()">זהה את המיקום שלי</button>
-            <div id="location-display" style="margin-top:10px; font-size:13px; color:#24292f; font-family:monospace;"></div>
+            <h3>🔋 נתוני סוללה בזמן אמת</h3>
+            <p>האתר קורא את מערכת ניהול האנרגיה של המכשיר ומציג את מצב הסוללה הנוכחי שלך.</p>
+            <div id="battery-display" style="font-size: 15px; font-weight: bold; color: #24292f; text-align: center; padding: 5px;">
+                טוען נתוני סוללה...
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <h3>📳 בדיקת מנוע רטט (Haptic)</h3>
+            <p>שליטה ברכיב הרטט הפנימי של הטלפון ליצירת תגובות פיזיות בלחיצה (לא עובד במחשב).</p>
+            <button class="btn" onclick="triggerVibration(100)">רטט קצר ⚡</button>
+            <button class="btn btn-secondary" onclick="triggerVibration([100, 50, 100, 50, 300])">דופק לב 💓</button>
+        </div>
+
+        <div class="feature-card">
+            <h3>🎨 פאנל מגע וגרפיקה קינטית</h3>
+            <p>משתמש במערך זיהוי המגע הרב-נקודתי של הסמארטפון כדי לאפשר ציור חופשי עם האצבע.</p>
+            <canvas id="paint-canvas"></canvas>
+            <button class="btn btn-secondary" style="padding: 6px; font-size: 12px;" onclick="clearCanvas()">נקה לוח</button>
         </div>
 
         <div class="feature-card">
@@ -86,16 +108,12 @@
     <script>
         let isBypass = false;
 
-        // 🛡️ בדיקת אבטחה חכמה - מונעת כניסה מ-F12 (מדמה טלפון) על ידי זיהוי דפדפן שולחני
+        // 🛡️ הגנה מפני F12 - מזהה פלטפורמות שולחניות ומסננת חומרת מגע
         function checkDevice() {
             if (isBypass) return;
 
             const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            // בדיקה האם הדפדפן תומך באירועי מגע פיזיים של מסך (ולא סימולציה של עכבר ב-F12)
             const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            
-            // בדיקה האם המערכת המדווחת היא ווינדוס או מק (מדמי F12 משנים מסך אבל משאירים את החומרה)
             const isDesktopPlatform = /Win32|Win64|MacIntel|Linux x86_64/i.test(navigator.platform);
 
             if (!isMobileUA || !hasTouch || isDesktopPlatform) {
@@ -104,39 +122,103 @@
             } else {
                 document.getElementById('desktop-blocker').style.display = 'none';
                 document.getElementById('mobile-content').style.display = 'flex';
+                initCanvasEngine(); // מפעיל את משטח הציור רק בטלפון
+                initBatteryEngine(); // מפעיל את מד הסוללה
             }
         }
 
-        // 🔓 פקודת המעקף שלך ל-Console במידה ואתה בונה את האתר מהמחשב: allowDesktop()
+        // 🔓 פקודת המעקף הרשמית שלך ל-Console: allowDesktop()
         window.allowDesktop = function() {
             isBypass = true;
             document.getElementById('desktop-blocker').style.display = 'none';
             document.getElementById('mobile-content').style.display = 'flex';
+            initCanvasEngine();
+            initBatteryEngine();
             console.log("🔓 הגישה מהמחשב אושרה לבדיקת פיתוח.");
         };
 
-        // הרצת בדיקת המכשיר בטעינה
         window.addEventListener('DOMContentLoaded', checkDevice);
 
-        // --- קוד פיצ'ר 1: מיקום GPS ---
-        function getLocation() {
-            const display = document.getElementById('location-display');
-            if (navigator.geolocation) {
-                display.innerText = "מתחבר ללוויין GPS...";
-                navigator.geolocation.getCurrentPosition((position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    display.innerHTML = `קו רוחב: ${lat.toFixed(4)}<br>קו אורך: ${lng.toFixed(4)}
-                    <br><button class="btn btn-secondary" style="padding:5px 10px; font-size:12px; width:auto; margin-top:5px;" onclick="window.open('https://www.google.com/maps?q=${lat},${lng}')">פתח ב-Google Maps 🗺️</button>`;
-                }, () => {
-                    display.innerText = "הגישה למיקום נדחתה. יש לאשר מיקום בדפדפן.";
+        // --- קוד פיצ'ר 1: מד סוללה חכם ---
+        function initBatteryEngine() {
+            if (navigator.getBattery) {
+                navigator.getBattery().then(battery => {
+                    function updateBatteryInfo() {
+                        const level = Math.floor(battery.level * 100);
+                        const charging = battery.charging ? "🔌 בטעינה" : "🔋 בפריקה";
+                        document.getElementById('battery-display').innerText = `מצב: ${level}% (${charging})`;
+                    }
+                    updateBatteryInfo();
+                    battery.addEventListener('levelchange', updateBatteryInfo);
+                    battery.addEventListener('chargingchange', updateBatteryInfo);
                 });
             } else {
-                display.innerText = "הדפדפן שלך לא תומך בשירותי מיקום.";
+                document.getElementById('battery-display').innerText = "פיצ'ר סוללה לא נתמך בדפדפן זה.";
             }
         }
 
-        // --- קוד פיצ'ר 2: הפעלת מצלמה ---
+        // --- קוד פיצ'ר 2: הפעלת רטט ---
+        function triggerVibration(pattern) {
+            if (navigator.vibrate) {
+                navigator.vibrate(pattern);
+            } else {
+                console.log("רטט חומרתי נתמך רק במכשירים סלולריים אמיתיים (אנדרואיד).");
+            }
+        }
+
+        // --- קוד פיצ'ר 3: מנוע הציור במגע ---
+        const canvas = document.getElementById('paint-canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+
+        function initCanvasEngine() {
+            canvas.width = canvas.parentElement.offsetWidth - 40;
+            canvas.height = 150;
+            ctx.strokeStyle = '#00ffaa';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+
+            // מאזיני מגע ייעודיים לסמארטפונים
+            canvas.addEventListener('touchstart', (e) => {
+                drawing = true;
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                ctx.beginPath();
+                ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                if (!drawing) return;
+                e.preventDefault(); // מונע מהמסך לזוז ולגלול בזמן שמציירים
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                ctx.stroke();
+            });
+
+            canvas.addEventListener('touchend', () => drawing = false);
+            
+            // תמיכה בעכבר למקרה שהפעלת את ה-allowDesktop במחשב לבדיקה
+            canvas.addEventListener('mousedown', (e) => {
+                drawing = true;
+                const rect = canvas.getBoundingClientRect();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                if (!drawing) return;
+                const rect = canvas.getBoundingClientRect();
+                ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                ctx.stroke();
+            });
+            canvas.addEventListener('mouseup', () => drawing = false);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // --- קוד פיצ'ר 4: הפעלת מצלמה ---
         let streamTrack = null;
         async function toggleCamera() {
             const video = document.getElementById('camera-feed');
@@ -149,7 +231,7 @@
 
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }, // מצלמה אחורית של הטלפון
+                    video: { facingMode: "environment" },
                     audio: false
                 });
                 video.srcObject = stream;
@@ -160,7 +242,7 @@
             }
         }
 
-        // --- קוד פיצ'ר 3: שיתוף מערכת ---
+        // --- קוד פיצ'ר 5: שיתוף מערכת ---
         async function shareWebsite() {
             if (navigator.share) {
                 try {
@@ -177,6 +259,5 @@
             }
         }
     </script>
-
 </body>
 </html>
