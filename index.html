@@ -3,1244 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>⚡ NEXUS_ULTIMATE_OS_v6.0 ⚡</title>
+    <title>האתר הנייד שלי</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #020208; color: #00ffaa;
-            font-family: 'Share Tech Mono', monospace;
-            overflow: hidden; user-select: none; -webkit-user-select: none;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #0d0e15; color: #ffffff;
+            overflow: hidden;
         }
 
-        /* מסך חסימה חכם למחשבים */
+        /* מסך חסימה למחשב - מוצג רק כשהמסך רחב */
         #desktop-blocker {
             display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle, #1a0005 0%, #000000 100%);
-            color: #ff2244; z-index: 999999;
+            background: #090a0f; color: #ff4a4a; z-index: 9999;
             flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; box-sizing: border-box; padding: 30px;
-            font-family: 'Orbitron', sans-serif;
+            font-size: 22px; font-weight: bold; text-align: center;
         }
-        
-        .warning-frame {
-            border: 2px dashed #ff2244; padding: 30px; border-radius: 4px;
-            background: rgba(255, 34, 68, 0.03); box-shadow: 0 0 30px rgba(255, 34, 68, 0.1);
+        #desktop-blocker .sub-text {
+            font-size: 15px; color: #5f6275; margin-top: 10px; font-weight: normal;
         }
 
-        /* ממשק המובייל המרכזי */
+        /* תוכן האתר לטלפון */
         #mobile-content {
-            display: block; width: 100%; height: 100%; position: relative;
-            box-sizing: border-box; background: linear-gradient(180deg, #04040c 0%, #010103 100%);
+            display: none; padding: 30px 20px; text-align: center; box-sizing: border-box;
+            height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
-        /* חוקי CSS קשיחים להצגה והסתרה לפי גודל מסך פיזי */
+        /* חוקי ה-CSS שקובעים מתי להציג מה: */
+        /* אם רוחב המסך קטן מ-768px (כמו בטלפון או במצב מדמה טלפון ב-F12) */
         @media (max-width: 768px) {
             #desktop-blocker { display: none !important; }
-            #mobile-content { display: block !important; }
+            #mobile-content { display: flex !important; }
         }
+        /* אם המסך גדול (מחשב רגיל) */
         @media (min-width: 769px) {
             #desktop-blocker { display: flex !important; }
             #mobile-content { display: none !important; }
         }
 
-        /* פילטר קווי סריקה של מסך האקרים ישן */
-        #mobile-content::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 170, 0.04) 50%);
-            z-index: 9999; background-size: 100% 4px; pointer-events: none;
+        /* עיצוב פיצ'ר משחק שיווי המשקל */
+        .game-zone {
+            position: relative; width: 240px; height: 240px;
+            border: 4px solid #00ffaa; border-radius: 50%;
+            margin: 25px auto; background: #141622;
+            box-shadow: 0 0 20px rgba(0, 255, 170, 0.15);
         }
 
-        .top-bar {
-            padding: 10px 15px; background: rgba(0, 255, 170, 0.05);
-            border-bottom: 1px dashed #00ffaa; font-size: 12px;
-            display: flex; justify-content: space-between; font-family: 'Orbitron', sans-serif;
+        #ball {
+            position: absolute; width: 24px; height: 24px;
+            background: #00ffaa; border-radius: 50%;
+            top: 108px; left: 108px; /* מרכז מדויק של העיגול */
+            box-shadow: 0 0 10px #00ffaa;
+            transition: transform 0.05s ease-out;
         }
 
-        .menu-title {
-            text-align: center; font-family: 'Orbitron', sans-serif; font-size: 16px;
-            margin: 20px 0 10px 0; letter-spacing: 3px; text-shadow: 0 0 10px #00ffaa;
-            font-weight: 900;
+        .action-btn {
+            padding: 12px 30px; font-size: 16px; font-weight: bold;
+            background: #00ffaa; color: #0d0e15; border: none;
+            border-radius: 25px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 255, 170, 0.3);
         }
-
-        /* גריד האפליקציות המשוכלל */
-        .apps-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 15px;
-            max-height: calc(100% - 120px); overflow-y: auto;
-        }
-
-        .cyber-card {
-            background: rgba(0, 20, 15, 0.4); border: 1px solid #00ffaa;
-            padding: 12px; border-radius: 4px; position: relative; overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0, 255, 170, 0.05); cursor: pointer;
-            display: flex; flex-direction: column; justify-content: space-between;
-            height: 95px; box-sizing: border-box;
-        }
-        .cyber-card h3 { margin: 0; font-size: 14px; letter-spacing: 0.5px; color: #fff; }
-        .cyber-card p { margin: 4px 0 0 0; font-size: 11px; color: #88c0a0; line-height: 1.3; }
-        .cyber-card .card-footer { font-size: 8px; color: rgba(0,255,170,0.4); text-align: left; }
-        .cyber-card:active { background: #00ffaa; color: #000; }
-        .cyber-card:active h3, .cyber-card:active p, .cyber-card:active .card-footer { color: #000; }
-
-        /* מסכי האפליקציות הפתוחות */
-        .full-app {
-            display: none; position: absolute; top: 38px; left: 0; width: 100%; height: calc(100% - 38px);
-            background: #020206; z-index: 100; flex-direction: column; box-sizing: border-box;
-        }
-        .app-top {
-            padding: 10px 15px; background: rgba(0, 255, 170, 0.15);
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: 'Orbitron', sans-serif; font-size: 11px; border-bottom: 1px solid #00ffaa;
-        }
-        .exit-btn {
-            background: transparent; border: 1px solid #00ffaa; color: #00ffaa;
-            padding: 2px 8px; font-family: 'Orbitron', sans-serif; cursor: pointer; font-size: 10px;
-        }
-        .exit-btn:active { background: #ff2244; color: #fff; border-color: #ff2244; }
-
-        /* אפליקציית רדאר */
-        #sonar-grid {
-            flex: 1; background: radial-gradient(circle, #001f15 0%, #020208 100%);
-            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .circle-pulse {
-            position: absolute; border: 1px solid rgba(0, 255, 170, 0.2); border-radius: 50%;
-            animation: ripple 3s infinite linear; pointer-events: none;
-        }
-        @keyframes ripple {
-            0% { width: 0px; height: 0px; opacity: 1; }
-            100% { width: 600px; height: 600px; opacity: 0; }
-        }
-
-        /* אפליקציית מטריקס */
-        #matrix-canvas { width: 100%; height: 100%; background: #000; display: block; }
-
-        /* אפליקציית משחק בינארי */
-        .binary-box {
-            font-size: 24px; font-weight: bold; padding: 15px; border: 1px solid #00ffaa;
-            margin: 20px auto; width: 80%; text-align: center; background: rgba(0,255,170,0.05);
-        }
-
-        /* אפליקציית לוויין (גרפיקה וקטורית ב-CSS) */
-        .satellite-map {
-            flex: 1; position: relative; background: #000; overflow: hidden;
-        }
-        .grid-line {
-            position: absolute; background: rgba(0, 255, 170, 0.05);
-        }
-        .scan-line-v {
-            position: absolute; width: 2px; height: 100%; background: rgba(0, 255, 170, 0.3);
-            left: 0; animation: scanX 4s infinite linear;
-        }
-        @keyframes scanX { 0% { left: 0%; } 100% { left: 100%; } }
+        .action-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
     <div id="desktop-blocker">
-        <div class="warning-frame">
-            <div style="font-size: 22px; font-weight: 700; letter-spacing: 3px; text-shadow: 0 0 10px #ff2244;">SECURITY_BREACH_DETECTION</div>
-            <p style="font-size: 12px; color: #aaa; margin: 15px 0 0 0; line-height: 1.5;">
-                MOBILE HARDWARE CORES REQUIRED.<br>
-                DESKTOP ENVIRONMENT NOT PERMITTED.<br>
-                <span style="color: #ff2244; font-weight: bold;">ACCESS_DENIED_</span>
-            </p>
-        </div>
+        <div>הגישה מותרת מטלפונים בלבד</div>
+        <div class="sub-text">אנא היכנס מהסמארטפון או העבר למצב תצוגת נייד ב-F12</div>
     </div>
 
     <div id="mobile-content">
-        <div class="top-bar">
-            <span style="color: #ff3366; font-weight: bold;">[SYS: OVERRIDE_ACTIVE]</span>
-            <span id="clock" style="font-weight: bold;">00:00:00</span>
+        <h1 style="margin: 0; font-size: 26px; color: #00ffaa;">NEXUS PLAY 🎯</h1>
+        <p style="color: #8f94a8; font-size: 15px; margin: 10px 0 0 0;">נסה להשאיר את הכדור במרכז על ידי הטיית המכשיר!</p>
+        
+        <div class="game-zone">
+            <div id="ball"></div>
         </div>
-
-        <div class="menu-title">NEXUS MAIN CORE INTERFACE</div>
-
-        <div class="apps-grid">
-            <div class="cyber-card" onclick="launchApp('app-sonar')">
-                <h3>[01] רדאר קוונטי</h3>
-                <p>סינתיסייזר גלי קול מבוסס קואורדינטות מגע.</p>
-                <div class="card-footer">AUDIO_SYNTH.EXE</div>
-            </div>
-            <div class="cyber-card" onclick="launchApp('app-matrix')">
-                <h3>[02] זרם נתונים</h3>
-                <p>מפענח קוד דינמי המגיב לגרירת אצבע קינטית.</p>
-                <div class="card-footer">MATRIX_RAIN.SYS</div>
-            </div>
-            <div class="cyber-card" onclick="launchApp('app-binary')">
-                <h3>[03] פריצה בינארית</h3>
-                <p>משחק פריצת קוד מהיר בזמן מוגבל.</p>
-                <div class="card-footer">BRUTE_FORCE.BAT</div>
-            </div>
-            <div class="cyber-card" onclick="launchApp('app-satellite')">
-                <h3>[04] קשר לווייני</h3>
-                <p>סימולטור מעקב וקטורי מונפש בזמן אמת.</p>
-                <div class="card-footer">SAT_UPLINK.NET</div>
-            </div>
-            <div class="cyber-card" onclick="launchApp('app-torch')">
-                <h3>[05] פנס טקטי</h3>
-                <p>הפעלת פלאש חומרתי במצב הבהוב מהיר.</p>
-                <div class="card-footer">STROBE_LIGHT.IO</div>
-            </div>
-            <div class="cyber-card" onclick="launchApp('app-diagnostic')">
-                <h3>[06] חיישני ליבה</h3>
-                <p>סריקה חיה של מד התאוצה ומערך המגע.</p>
-                <div class="card-footer">DIAGNOSTICS.LOG</div>
-            </div>
-        </div>
-
-        <div id="app-sonar" class="full-app">
-            <div class="app-top"><span>QUANTUM_SONAR_STREAM</span><button class="exit-btn" onclick="killApp('app-sonar')">SHUTDOWN</button></div>
-            <div id="sonar-grid">
-                <div class="circle-pulse" style="animation-delay: 0s;"></div>
-                <div class="circle-pulse" style="animation-delay: 1.5s;"></div>
-                <div style="pointer-events:none; text-align:center; font-size:13px; z-index:5;">
-                    <p style="text-shadow: 0 0 8px #00ffaa; margin:0;">גע והזז את האצבע ליצירת תדר</p>
-                    <p id="sonar-output" style="color: #ff3366; margin-top:8px;">SIGNAL: IDLE</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="app-matrix" class="full-app">
-            <div class="app-top"><span>DATA_STREAM_DECRYPTER</span><button class="exit-btn" onclick="killApp('app-matrix')">SHUTDOWN</button></div>
-            <div style="flex:1; position:relative; overflow:hidden;"><canvas id="matrix-canvas"></canvas></div>
-        </div>
-
-        <div id="app-binary" class="full-app">
-            <div class="app-top"><span>BRUTE_FORCE_MODULE</span><button class="exit-btn" onclick="killApp('app-binary')">SHUTDOWN</button></div>
-            <div style="padding:20px; text-align:center; flex:1; display:flex; flex-direction:column; justify-content:center;">
-                <p>הקש על הכפתור התואם לקוד המטרה!</p>
-                <div id="binary-target" class="binary-box">0110</div>
-                <p id="binary-timer" style="color:#ff2244;">TIME: 10.0s</p>
-                <div style="display:flex; gap:15px; justify-content:center; margin-top:20px;">
-                    <button onclick="checkBinaryAnswer('0110')" style="padding:15px 30px; background:black; color:#00ffaa; border:1px solid #00ffaa; font-weight:bold; font-size:18px;">0110</button>
-                    <button onclick="checkBinaryAnswer('1001')" style="padding:15px 30px; background:black; color:#00ffaa; border:1px solid #00ffaa; font-weight:bold; font-size:18px;">1001</button>
-                </div>
-                <p id="binary-score" style="margin-top:20px;">SCORE: 0</p>
-            </div>
-        </div>
-
-        <div id="app-satellite" class="full-app">
-            <div class="app-top"><span>SATELLITE_LINK_SCAN</span><button class="exit-btn" onclick="killApp('app-satellite')">SHUTDOWN</button></div>
-            <div class="satellite-map">
-                <div class="scan-line-v"></div>
-                <div style="position:absolute; top:40%; left:30%; width:8px; height:8px; background:#ff2244; border-radius:50%; box-shadow:0 0 10px #ff2244; animation: pulse 1s infinite alternate;"></div>
-                <div style="position:absolute; top:20%; left:70%; width:8px; height:8px; background:#00ffaa; border-radius:50%; box-shadow:0 0 10px #00ffaa;"></div>
-                <div style="position:absolute; bottom:15px; right:15px; font-size:11px; background:rgba(0,0,0,0.7); padding:5px; border:1px solid #00ffaa;">
-                    LAT: 32.0853<br>LNG: 34.7818<br>STATUS: LOCKING_GRID...
-                </div>
-            </div>
-        </div>
-
-        <div id="app-torch" class="full-app">
-            <div class="app-top"><span>HARDWARE_LIGHT_CONTROLLER</span><button class="exit-btn" onclick="killApp('app-torch')">SHUTDOWN</button></div>
-            <div style="padding:30px; text-align:center; flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                <p>שימוש בפקודת מערכת לשינוי תדר הפלאש האחורי</p>
-                <button onclick="toggleStrobe()" id="strobe-btn" style="padding:20px 40px; background:#ff9900; color:black; font-weight:bold; font-size:18px; border:none; border-radius:4px; box-shadow:0 0 15px rgba(255,153,0,0.4);">הפעל מצב STROBE 🔦</button>
-                <p id="strobe-status" style="font-size:12px; color:#555; margin-top:15px;"></p>
-            </div>
-        </div>
-
-        <div id="app-diagnostic" class="full-app">
-            <div class="app-top"><span>HARDWARE_DIAGNOSTICS</span><button class="exit-btn" onclick="killApp('app-diagnostic')">SHUTDOWN</button></div>
-            <div style="padding: 20px; font-size:13px; line-height: 1.8; overflow-y:auto; flex:1;">
-                <p style="color: #ff3366;">> INITIALIZING SYSTEM CHECK...</p>
-                <p id="diag-touch">> PHYSICAL TOUCH ACTIVE: 0 POINTS</p>
-                <p id="diag-gyro">> HARDWARE GYRO REF: ACCESSING CORES...</p>
-                <p style="color:#00ffaa;">> SECURITY_GRID: ON_DEVICE_STABLE</p>
-            </div>
-        </div>
+        
+        <button id="start-btn" class="action-btn">הפעל חיישנים</button>
+        <p id="status" style="color: #5f6275; font-size: 13px; margin-top: 15px; min-height: 18px;"></p>
     </div>
 
     <script>
-        // 🔓 פקודת מעקף ל-Console במחשב לבדיקות פיתוח: allowDesktop()
-        window.allowDesktop = function() {
-            document.getElementById('desktop-blocker').style.setProperty('display', 'none', 'important');
-            document.getElementById('mobile-content').style.setProperty('display', 'block', 'important');
-            console.log("🔓 SYSTEM OVERRIDE: ACTIVE");
-        };
+        // שימוש ב-CSS בלבד בשביל החסימה פירושו שאין פקודות JS שאפשר לעקוף או להריץ במסוף!
+        // הפקודה allowDesktop() הוסרה לחלוטין ולא קיימת יותר בקוד.
 
-        // ניהול ניווט אפליקציות
-        function launchApp(id) {
-            document.getElementById(id).style.display = 'flex';
-            if (id === 'app-sonar') initSonarEngine();
-            if (id === 'app-matrix') initMatrixEngine();
-            if (id === 'app-binary') startBinaryGame();
-        }
-        function killApp(id) {
-            document.getElementById(id).style.display = 'none';
-            if (id === 'app-sonar') shutdownSonarEngine();
-            if (id === 'app-matrix') shutdownMatrixEngine();
-            if (id === 'app-binary') stopBinaryGame();
-            if (id === 'app-torch') stopStrobe();
-        }
+        const ball = document.getElementById('ball');
+        const startBtn = document.getElementById('start-btn');
+        const statusText = document.getElementById('status');
 
-        // שעון עליון
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('he-IL');
-        }, 1000);
+        let ballX = 108;
+        let ballY = 108;
+        let isGameRunning = false;
 
-        // --- 📡 אפליקציה 1: מנוע רדאר קולי ---
-        let synthCtx = null, osc = null, amp = null;
-        function initSonarEngine() {
-            const grid = document.getElementById('sonar-grid');
-            grid.addEventListener('pointermove', moveSonar);
-            grid.addEventListener('pointerdown', startSonar);
-            grid.addEventListener('pointerup', stopSonar);
-            grid.addEventListener('pointerleave', stopSonar);
-        }
-        function startSonar(e) {
-            if (!synthCtx) synthCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (osc) return;
-            osc = synthCtx.createOscillator(); amp = synthCtx.createGain();
-            osc.type = 'triangle'; osc.connect(amp); amp.connect(synthCtx.destination);
-            osc.start(); moveSonar(e);
-        }
-        function moveSonar(e) {
-            if (!osc) return;
-            const bounds = e.currentTarget.getBoundingClientRect();
-            const freq = Math.max(80, Math.min(1200, ((e.clientX - bounds.left) / bounds.width) * 1000));
-            const vol = Math.max(0.02, Math.min(0.25, 1 - ((e.clientY - bounds.top) / bounds.height)));
-            osc.frequency.setValueAtTime(freq, synthCtx.currentTime);
-            amp.gain.setValueAtTime(vol, synthCtx.currentTime);
-            document.getElementById('sonar-output').innerText = `FREQ: ${Math.floor(freq)}Hz // VOL: ${Math.floor(vol * 100)}%`;
-        }
-        function stopSonar() { if (osc) { osc.stop(); osc.disconnect(); osc = null; } document.getElementById('sonar-output').innerText = `SIGNAL: IDLE`; }
-        function shutdownSonarEngine() { stopSonar(); }
-
-        // --- 💻 אפליקציה 2: מנוע מטריקס ---
-        let matrixInterval = null;
-        function initMatrixEngine() {
-            const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight;
-            const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$@&*%".split("");
-            const font_size = 14; const drops = Array(Math.floor(canvas.width / font_size)).fill(1);
-            let touchX = -999;
-            canvas.addEventListener('touchmove', (e) => { touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left; });
-            canvas.addEventListener('touchend', () => touchX = -999);
-
-            matrixInterval = setInterval(() => {
-                ctx.fillStyle = 'rgba(2, 2, 8, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < drops.length; i++) {
-                    ctx.fillStyle = Math.abs((i * font_size) - touchX) < 40 ? '#ffffff' : '#00ffaa';
-                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * font_size, drops[i] * font_size);
-                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
+        startBtn.addEventListener('click', async () => {
+            // בדיקת הרשאות חיישנים (חובה במכשירי אייפון/iOS)
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceOrientationEvent.requestPermission();
+                    if (permissionState === 'granted') {
+                        startGame();
+                    } else {
+                        statusText.innerText = "חובה לאשר גישה לחיישנים כדי לשחק.";
+                    }
+                } catch (error) {
+                    statusText.innerText = "החיישנים דורשים אתר מאובטח (HTTPS) או מכשיר נייד אמיתי.";
+                    // במצב F12 במחשב אין חיישנים פיזיים, אז נאפשר תנועה עם העכבר כדי שתוכל לבדוק שהכל עובד!
+                    enableBackupControls();
                 }
-            }, 33);
-        }
-        function shutdownMatrixEngine() { clearInterval(matrixInterval); }
-
-        // --- 🔢 אפליקציה 3: משחק פריצה בינארית ---
-        let binaryTimer = null, binaryTimeLeft = 10.0, binaryScore = 0, currentTarget = "0110";
-        function startBinaryGame() {
-            binaryScore = 0; binaryTimeLeft = 10.0;
-            document.getElementById('binary-score').innerText = `SCORE: ${binaryScore}`;
-            nextBinaryTurn();
-            binaryTimer = setInterval(() => {
-                binaryTimeLeft -= 0.1;
-                document.getElementById('binary-timer').innerText = `TIME: ${binaryTimeLeft.toFixed(1)}s`;
-                if(binaryTimeLeft <= 0) {
-                    clearInterval(binaryTimer);
-                    document.getElementById('binary-target').innerText = "GAME OVER";
-                }
-            }, 1000/10);
-        }
-        function nextBinaryTurn() {
-            const options = ["0110", "1001"];
-            currentTarget = options[Math.floor(Math.random() * options.length)];
-            document.getElementById('binary-target').innerText = currentTarget;
-        }
-        function checkBinaryAnswer(ans) {
-            if(binaryTimeLeft <= 0) return;
-            if(ans === currentTarget) {
-                binaryScore += 10; binaryTimeLeft = Math.min(10, binaryTimeLeft + 2);
-                document.getElementById('binary-score').innerText = `SCORE: ${binaryScore}`;
-                nextBinaryTurn();
             } else {
-                binaryTimeLeft = Math.max(0, binaryTimeLeft - 3);
+                // מכשירי אנדרואיד או דפדפנים שלא דורשים אישור מיוחד
+                startGame();
             }
-        }
-        function stopBinaryGame() { clearInterval(binaryTimer); }
+        });
 
-        // --- 🔦 אפליקציה 5: פלאש פנס מהיר ---
-        let strobeInterval = null, videoTrack = null, strobeActive = false;
-        async function toggleStrobe() {
-            const statusBox = document.getElementById('strobe-status');
-            if(strobeActive) { stopStrobe(); return; }
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: "environment" } } });
-                videoTrack = stream.getVideoTracks()[0];
-                strobeActive = true;
-                document.getElementById('strobe-btn').innerText = "כבה פלאש 🚨";
+        function startGame() {
+            if (isGameRunning) return;
+            isGameRunning = true;
+            startBtn.style.display = 'none';
+            statusText.innerText = "החיישנים פעילים! הטה את הטלפון שלך.";
+
+            window.addEventListener('deviceorientation', (event) => {
+                let tiltX = event.gamma; // שמאל-ימין
+                let tiltY = event.beta;  // קדימה-אחורה
+
+                if (tiltX === null || tiltY === null) {
+                    statusText.innerText = "לא נמצאו חיישני תנועה פיזיים במכשיר זה.";
+                    enableBackupControls();
+                    return;
+                }
+
+                // עדכון מיקום חלק (מפחיתים 45 מעלות מציר ה-Y כי מחזיקים את הטלפון בזווית מול הפנים)
+                ballX += tiltX * 0.35;
+                ballY += (tiltY - 45) * 0.35;
+
+                // הגבלת תנועת הכדור בתוך גבולות העיגול (קוטר 240 פחות 24 של הכדור זה מקסימום 206)
+                ballX = Math.max(10, Math.min(206, ballX));
+                ballY = Math.max(10, Math.min(206, ballY));
+
+                ball.style.left = ballX + 'px';
+                ball.style.top = ballY + 'px';
+            });
+        }
+
+        // שליטה חלופית עם העכבר - מופעלת רק אם פתחת את האתר דרך ה-F12 במחשב (מצב טלפון) ואין חיישנים
+        function enableBackupControls() {
+            startBtn.style.display = 'none';
+            statusText.innerText = "מצב בדיקה: הזז את העכבר בתוך העיגול כדי לשלוט בכדור";
+            
+            const zone = document.querySelector('.game-zone');
+            zone.addEventListener('mousemove', (e) => {
+                const rect = zone.getBoundingClientRect();
+                let mouseX = e.clientX - rect.left - 12;
+                let mouseY = e.clientY - rect.top - 12;
                 
-                let lightState = false;
-                strobeInterval = setInterval(async () => {
-                    lightState = !lightState;
-          t ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight;
-            const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$@&*%".split("");
-            const font_size = 14; const drops = Array(Math.floor(canvas.width / font_size)).fill(1);
-            let touchX = -999;
-            canvas.addEventListener('touchmove', (e) => { touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left; });
-            canvas.addEventListener('touchend', () => touchX = -999);
-
-            matrixInterval = setInterval(() => {
-                ctx.fillStyle = 'rgba(3, 3, 12, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < drops.length; i++) {
-                    ctx.fillStyle = Math.abs((i * font_size) - touchX) < 40 ? '#ffffff' : '#00ffaa';
-                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * font_size, drops[i] * font_size);
-                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                }
-            }, 33);
-        }
-        function shutdownMatrixEngine() { clearInterval(matrixInterval); }
-    </script>
-</body>
-</html>
-            font-size: 24px; font-weight: 700; letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(255, 34, 68, 0.5);
-            animation: pulse 1.5s infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.9; }
-            100% { transform: scale(1.02); opacity: 1; text-shadow: 0 0 20px #ff2244; }
-        }
-
-        /* הממשק לטלפון */
-        #mobile-content {
-            display: none; width: 100%; height: 100%; position: relative;
-            box-sizing: border-box; background: linear-gradient(180deg, #050510 0%, #010105 100%);
-        }
-
-        #mobile-content::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 255, 170, 0.06) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 999; background-size: 100% 4px, 6px 100%; pointer-events: none;
-        }
-
-        .top-bar {
-            padding: 12px; background: rgba(0, 255, 170, 0.05);
-            border-bottom: 1px dashed #00ffaa; font-size: 13px;
-            display: flex; justify-content: space-between; font-family: 'Orbitron', sans-serif;
-        }
-
-        .menu-title {
-            text-align: center; font-family: 'Orbitron', sans-serif; font-size: 18px;
-            margin: 25px 0 10px 0; letter-spacing: 2px; text-shadow: 0 0 10px #00ffaa;
-        }
-
-        .apps-list { display: flex; flex-direction: column; gap: 18px; padding: 0 25px; }
-
-        .cyber-card {
-            background: rgba(0, 15, 10, 0.6); border: 1px solid #00ffaa;
-            padding: 16px; border-radius: 4px; position: relative; overflow: hidden;
-            box-shadow: inset 0 0 15px rgba(0, 255, 170, 0.1); cursor: pointer;
-        }
-        .cyber-card::after {
-            content: "SYSTEM_READY"; position: absolute; left: 10px; bottom: 4px;
-            font-size: 8px; color: rgba(0,255,170,0.3);
-        }
-        .cyber-card h3 { margin: 0 0 5px 0; font-size: 16px; letter-spacing: 1px; }
-        .cyber-card p { margin: 0; font-size: 12px; color: #88c0a0; }
-        .cyber-card:active { background: #00ffaa; color: #000; }
-
-        .full-app {
-            display: none; position: absolute; top: 41px; left: 0; width: 100%; height: calc(100% - 41px);
-            background: #03030c; z-index: 100; flex-direction: column; box-sizing: border-box;
-        }
-        .app-top {
-            padding: 10px 15px; background: rgba(0, 255, 170, 0.15);
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: 'Orbitron', sans-serif; font-size: 12px; border-bottom: 1px solid #00ffaa;
-        }
-        .exit-btn {
-            background: transparent; border: 1px solid #00ffaa; color: #00ffaa;
-            padding: 2px 10px; font-family: 'Orbitron', sans-serif; cursor: pointer;
-        }
-
-        #sonar-grid {
-            flex: 1; background: radial-gradient(circle, #001f15 0%, #03030c 100%);
-            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .circle-pulse {
-            position: absolute; border: 1px solid rgba(0, 255, 170, 0.2); border-radius: 50%;
-            animation: ripple 3s infinite linear; pointer-events: none;
-        }
-        @keyframes ripple {
-            0% { width: 0px; height: 0px; opacity: 1; }
-            100% { width: 500px; height: 500px; opacity: 0; }
-        }
-        #matrix-canvas { width: 100%; height: 100%; background: #000; display: block; }
-    </style>
-</head>
-<body>
-
-    <div id="desktop-blocker" onclick="secretBypassCheck()">
-        <div class="warning-frame">
-            <div class="glitch-title">SECURITY_BREACH_DETECTION</div>
-            <p style="font-size: 12px; color: #aaa; margin: 15px 0 0 0; line-height: 1.5;">
-                MOBILE CORES REQUIRED.<br>
-                DESKTOP ENVIRONMENT DETECTED.<br>
-                <span style="color: #ff2244; font-weight: bold;">ACCESS_DENIED_</span>
-            </p>
-            <p style="font-size: 10px; color: #444; margin-top: 15px;">[SECRET_KEY_TOUCH_ACTIVE]</p>
-        </div>
-    </div>
-
-    <div id="mobile-content">
-        <div class="top-bar">
-            <span style="color: #ff3366;">[SYS_STATUS: OVERRIDE]</span>
-            <span id="clock">00:00:00</span>
-        </div>
-
-        <div class="menu-title">NEXUS MAIN INTERFACE</div>
-
-        <div class="apps-list">
-            <div class="cyber-card" onclick="launchApp('app-sonar')">
-                <h3>[01] // רדאר תדרים קוונטי</h3>
-                <p>מייצר סינתזת גלי קול מותאמת אישית על פי קואורדינטות מגע בזמן אמת.</p>
-            </div>
-            <div class="cyber-card" onclick="launchApp('app-matrix')">
-                <h3>[02] // מפענח זרם נתונים (Matrix)</h3>
-                <p>מציג הצפנת קוד רצה עם השפעה קינטית על ידי גרירת האצבע.</p>
-            </div>
-            <div class="cyber-card" onclick="launchApp('app-diagnostic')">
-                <h3>[03] // דיאגנוסטיקת ליבה וחיישנים</h3>
-                <p>סריקה חיה של מד התאוצה ומספר נקודות המגע הפיזיות בחומרה.</p>
-            </div>
-        </div>
-
-        <div id="app-sonar" class="full-app">
-            <div class="app-top"><span>QUANTUM_SONAR_STREAM</span><button class="exit-btn" onclick="killApp('app-sonar')">SHUTDOWN</button></div>
-            <div id="sonar-grid">
-                <div class="circle-pulse" style="animation-delay: 0s;"></div>
-                <div class="circle-pulse" style="animation-delay: 1s;"></div>
-                <div style="pointer-events:none; text-align:center; font-size:14px; z-index:5;">
-                    <p style="text-shadow: 0 0 8px #00ffaa;">גע והזז את האצבע על מסך הרדאר</p>
-                    <p id="sonar-output" style="color: #ff3366; font-size:12px; margin-top:10px;">SIGNAL: IDLE</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="app-matrix" class="full-app">
-            <div class="app-top"><span>DATA_STREAM_DECRYPTER</span><button class="exit-btn" onclick="killApp('app-matrix')">SHUTDOWN</button></div>
-            <div style="flex:1; position:relative; overflow:hidden;"><canvas id="matrix-canvas"></canvas></div>
-        </div>
-
-        <div id="app-diagnostic" class="full-app">
-            <div class="app-top"><span>HARDWARE_DIAGNOSTICS</span><button class="exit-btn" onclick="killApp('app-diagnostic')">SHUTDOWN</button></div>
-            <div style="padding: 25px; font-size:14px; line-height: 1.8; overflow-y:auto; flex:1;">
-                <p style="color: #ff3366;">> INITIALIZING SYSTEM CHECK...</p>
-                <p id="diag-touch">> PHYSICAL TOUCH CORES: 0</p>
-                <p id="diag-gyro">> HARDWARE GYRO REF: ACCESSING...</p>
-                <p style="color:#00ffaa; margin-top:20px;">> המערכת פועלת כסדרה.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let isDevBypass = false;
-        let clickCount = 0;
-
-        // 🔓 פונקציית מעקף סודית בלחיצות (אם נתקעת בטלפון או במחשב!)
-        function secretBypassCheck() {
-            clickCount++;
-            if (clickCount >= 5) { // 5 לחיצות מהירות על המסך השחור פותחות הכל!
-                allowDesktop();
-            }
-            // איפוס ספירה אחרי 2 שניות שלא לחצו
-            setTimeout(() => { clickCount = 0; }, 2000);
-        }
-
-        // פונקציית החסימה הגמישה והמתוקנת
-        function hardwareSecurityCheck() {
-            if (isDevBypass) return;
-
-            // בדיקה רחבה יותר למובייל (כולל מגע ומסכים רחבים של מתקפלים)
-            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-            const isSmallWidth = window.innerWidth <= 991; // הבראה למסכים גדולים/טאבלטים
-
-            // אם זה מכשיר תומך מגע וגם הרוחב הגיוני, או שזה UA מובהק של נייד
-            if (isMobileUA || (isTouch && isSmallWidth)) {
-                document.getElementById('desktop-blocker').style.display = 'none';
-                document.getElementById('mobile-content').style.display = 'block';
-            } else {
-                document.getElementById('desktop-blocker').style.display = 'flex';
-                document.getElementById('mobile-content').style.display = 'none';
-            }
-        }
-
-        // פקודת המעקף הרשמית (עובדת גם מהקונסול `allowDesktop()` וגם מהלחיצות)
-        window.allowDesktop = function() {
-            isDevBypass = true;
-            document.getElementById('desktop-blocker').style.display = 'none';
-            document.getElementById('mobile-content').style.display = 'block';
-            console.log("🔓 SYSTEM OVERRIDE: ACTIVE");
-        };
-
-        hardwareSecurityCheck();
-        window.addEventListener('resize', hardwareSecurityCheck);
-
-        // ניהול אפליקציות
-        function launchApp(id) {
-            document.getElementById(id).style.display = 'flex';
-            if (id === 'app-sonar') initSonarEngine();
-            if (id === 'app-matrix') initMatrixEngine();
-        }
-        function killApp(id) {
-            document.getElementById(id).style.display = 'none';
-            if (id === 'app-sonar') shutdownSonarEngine();
-            if (id === 'app-matrix') shutdownMatrixEngine();
-        }
-
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('he-IL');
-        }, 1000);
-
-        // מנוע רדאר קולי
-        let synthCtx = null, osc = null, amp = null;
-        function initSonarEngine() {
-            const grid = document.getElementById('sonar-grid');
-            grid.addEventListener('pointermove', moveSonar);
-            grid.addEventListener('pointerdown', startSonar);
-            grid.addEventListener('pointerup', stopSonar);
-            grid.addEventListener('pointerleave', stopSonar);
-        }
-        function startSonar(e) {
-            if (!synthCtx) synthCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (osc) return;
-            osc = synthCtx.createOscillator(); amp = synthCtx.createGain();
-            osc.type = 'triangle'; osc.connect(amp); amp.connect(synthCtx.destination);
-            osc.start(); moveSonar(e);
-        }
-        function moveSonar(e) {
-            if (!osc) return;
-            const bounds = e.currentTarget.getBoundingClientRect();
-            const freq = Math.max(80, Math.min(1200, ((e.clientX - bounds.left) / bounds.width) * 1000));
-            const vol = Math.max(0.02, Math.min(0.25, 1 - ((e.clientY - bounds.top) / bounds.height)));
-            osc.frequency.setValueAtTime(freq, synthCtx.currentTime);
-            amp.gain.setValueAtTime(vol, synthCtx.currentTime);
-            document.getElementById('sonar-output').innerText = `FREQ: ${Math.floor(freq)}Hz // VOL: ${Math.floor(vol * 100)}%`;
-        }
-        function stopSonar() { if (osc) { osc.stop(); osc.disconnect(); osc = null; } }
-        function shutdownSonarEngine() { stopSonar(); }
-
-        // מנוע מטריקס
-        let matrixInterval = null;
-        function initMatrixEngine() {
-            const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight;
-            const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$@&*%".split("");
-            const font_size = 14; const drops = Array(Math.floor(canvas.width / font_size)).fill(1);
-            let touchX = -999;
-            canvas.addEventListener('touchmove', (e) => { touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left; });
-            canvas.addEventListener('touchend', () => touchX = -999);
-
-            matrixInterval = setInterval(() => {
-                ctx.fillStyle = 'rgba(3, 3, 12, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < drops.length; i++) {
-                    ctx.fillStyle = Math.abs((i * font_size) - touchX) < 40 ? '#ffffff' : '#00ffaa';
-                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * font_size, drops[i] * font_size);
-                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                }
-            }, 33);
-        }
-        function shutdownMatrixEngine() { clearInterval(matrixInterval); }
-
-        // דיאגנוסטיקה
-        window.addEventListener('touchmove', (e) => {
-            const t = document.getElementById('diag-touch'); if(t) t.innerText = `> PHYSICAL TOUCH CORES: ${e.touches.length} ACTIVE`;
-        });
-        window.addEventListener('deviceorientation', (e) => {
-            const g = document.getElementById('diag-gyro'); if(g && e.beta) g.innerText = `> HARDWARE GYRO: X[${Math.floor(e.gamma)}°] | Y[${Math.floor(e.beta)}°]`;
-        });
-    </script>
-</body>
-</html>
-p-blocker').style.display = 'none';
-            document.getElementById('mobile-content').style.display = 'block';
-            console.log("🔓 SYSTEM OVERRIDE: מצב מפתח מאושר.");
-        };
-
-        // הפעלת הבדיקה
-        hardwareSecurityCheck();
-        window.addEventListener('resize', hardwareSecurityCheck);
-
-        // ניהול ניווט אפליקציות
-        function launchApp(id) {
-            document.getElementById(id).style.display = 'flex';
-            if (id === 'app-sonar') initSonarEngine();
-            if (id === 'app-matrix') initMatrixEngine();
-        }
-        function killApp(id) {
-            document.getElementById(id).style.display = 'none';
-            if (id === 'app-sonar') shutdownSonarEngine();
-            if (id === 'app-matrix') shutdownMatrixEngine();
-        }
-
-        // שעון מערכת עליון
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('he-IL');
-        }, 1000);
-
-        // --- 📡 אפליקציה 1: מנוע רדאר קולי קוונטי ---
-        let synthCtx = null;
-        let osc = null;
-        let amp = null;
-
-        function initSonarEngine() {
-            const sonarGrid = document.getElementById('sonar-grid');
-            sonarGrid.addEventListener('pointermove', moveSonar);
-            sonarGrid.addEventListener('pointerdown', startSonar);
-            sonarGrid.addEventListener('pointerup', stopSonar);
-            sonarGrid.addEventListener('pointerleave', stopSonar);
-        }
-
-        function startSonar(e) {
-            if (!synthCtx) synthCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (osc) return;
-
-            osc = synthCtx.createOscillator();
-            amp = synthCtx.createGain();
-            
-            osc.type = 'triangle';
-            osc.connect(amp);
-            amp.connect(synthCtx.destination);
-            
-            osc.start();
-            moveSonar(e);
-        }
-
-        function moveSonar(e) {
-            if (!osc) return;
-            const bounds = e.currentTarget.getBoundingClientRect();
-            const posX = e.clientX - bounds.left;
-            const posY = e.clientY - bounds.top;
-
-            const targetFrequency = Math.max(80, Math.min(1200, (posX / bounds.width) * 1000));
-            const targetVolume = Math.max(0.02, Math.min(0.25, 1 - (posY / bounds.height)));
-
-            osc.frequency.setValueAtTime(targetFrequency, synthCtx.currentTime);
-            amp.gain.setValueAtTime(targetVolume, synthCtx.currentTime);
-
-            document.getElementById('sonar-output').innerText = `FREQ: ${Math.floor(targetFrequency)}Hz // BEAM_AMP: ${Math.floor(targetVolume * 100)}%`;
-        }
-
-        function stopSonar() {
-            if (osc) {
-                osc.stop();
-                osc.disconnect();
-                osc = null;
-            }
-            document.getElementById('sonar-output').innerText = `SIGNAL: IDLE`;
-        }
-
-        function shutdownSonarEngine() { stopSonar(); }
-
-        // --- 💻 אפליקציה 2: מנוע קוד מטריקס נופל ---
-        let matrixInterval = null;
-        function initMatrixEngine() {
-            const canvas = document.getElementById('matrix-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = canvas.parentElement.offsetWidth;
-            canvas.height = canvas.parentElement.offsetHeight;
-
-            const codeCharacters = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$@&*%";
-            const charsArray = codeCharacters.split("");
-            const font_size = 14;
-            const totalColumns = canvas.width / font_size;
-            const drops = Array(Math.floor(totalColumns)).fill(1);
-
-            let touchX = -999;
-            canvas.addEventListener('touchmove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                touchX = e.touches[0].clientX - rect.left;
+                ball.style.left = Math.max(10, Math.min(206, mouseX)) + 'px';
+                ball.style.top = Math.max(10, Math.min(206, mouseY)) + 'px';
             });
-            canvas.addEventListener('touchend', () => touchX = -999);
-
-            function renderMatrix() {
-                ctx.fillStyle = 'rgba(3, 3, 12, 0.06)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#00ffaa';
-                ctx.font = font_size + 'px monospace';
-
-                for (let i = 0; i < drops.length; i++) {
-                    const character = charsArray[Math.floor(Math.random() * charsArray.length)];
-                    
-                    const colX = i * font_size;
-                    if (Math.abs(colX - touchX) < 40) {
-                        ctx.fillStyle = '#ffffff';
-                    } else {
-                        ctx.fillStyle = '#00ffaa';
-                    }
-
-                    ctx.fillText(character, colX, drops[i] * font_size);
-                    
-                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
-            matrixInterval = setInterval(renderMatrix, 33);
         }
-
-        function shutdownMatrixEngine() {
-            clearInterval(matrixInterval);
-        }
-
-        // --- 📊 אפליקציה 3: עדכוני דיאגנוסטיקה מהחיישנים בלייב ---
-        window.addEventListener('touchmove', (e) => {
-            const diagTouch = document.getElementById('diag-touch');
-            if (diagTouch) diagTouch.innerText = `> PHYSICAL TOUCH CORES: ${e.touches.length} ACTIVE_POINTS`;
-        });
-        
-        window.addEventListener('deviceorientation', (e) => {
-            const diagGyro = document.getElementById('diag-gyro');
-            if (diagGyro && e.beta) {
-                diagGyro.innerText = `> HARDWARE GYRO REF: X[${Math.floor(e.gamma)}°] | Y[${Math.floor(e.beta)}°]`;
-            }
-        });
-    </script>
-</body>
-</html>
-tent && !isDevBypass) {
-                    mainContent.style.display = 'none';
-                }
-                document.getElementById('desktop-blocker').style.display = 'flex';
-            } else {
-                document.getElementById('desktop-blocker').style.display = 'none';
-                document.getElementById('mobile-content').style.display = 'block';
-            }
-        }
-
-        // 🔓 פקודת המעקף המקצועית שלך למסוף (Console): allowDesktop()
-        window.allowDesktop = function() {
-            isDevBypass = true;
-            document.getElementById('desktop-blocker').style.display = 'none';
-            document.getElementById('mobile-content').style.display = 'block';
-            console.log("🔓 SYSTEM OVERRIDE: מצב מפתח מאושר.");
-        };
-
-        setInterval(hardwareSecurityCheck, 1000);
-        window.addEventListener('DOMContentLoaded', hardwareSecurityCheck);
-
-        // ניהול ניווט אפליקציות
-        function launchApp(id) {
-            document.getElementById(id).style.display = 'flex';
-            if (id === 'app-sonar') initSonarEngine();
-            if (id === 'app-matrix') initMatrixEngine();
-        }
-        function killApp(id) {
-            document.getElementById(id).style.display = 'none';
-            if (id === 'app-sonar') shutdownSonarEngine();
-            if (id === 'app-matrix') shutdownMatrixEngine();
-        }
-
-        // שעון מערכת עליון
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('he-IL');
-        }, 1000);
-
-        // --- 📡 אפליקציה 1: מנוע רדאר קולי קוונטי (Web Audio API משוכלל) ---
-        let synthCtx = null;
-        let osc = null;
-        let amp = null;
-
-        function initSonarEngine() {
-            const sonarGrid = document.getElementById('sonar-grid');
-            sonarGrid.addEventListener('pointermove', moveSonar);
-            sonarGrid.addEventListener('pointerdown', startSonar);
-            sonarGrid.addEventListener('pointerup', stopSonar);
-            sonarGrid.addEventListener('pointerleave', stopSonar);
-        }
-
-        function startSonar(e) {
-            if (!synthCtx) synthCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (osc) return;
-
-            osc = synthCtx.createOscillator();
-            amp = synthCtx.createGain();
-            
-            osc.type = 'triangle'; // צליל עמוק וחללי של רדאר סרטים
-            osc.connect(amp);
-            amp.connect(synthCtx.destination);
-            
-            osc.start();
-            moveSonar(e);
-        }
-
-        function moveSonar(e) {
-            if (!osc) return;
-            const bounds = e.currentTarget.getBoundingClientRect();
-            const posX = e.clientX - bounds.left;
-            const posY = e.clientY - bounds.top;
-
-            // חישוב תדרים ווליום לפי המגע שלך
-            const targetFrequency = Math.max(80, Math.min(1200, (posX / bounds.width) * 1000));
-            const targetVolume = Math.max(0.02, Math.min(0.25, 1 - (posY / bounds.height)));
-
-            osc.frequency.setValueAtTime(targetFrequency, synthCtx.currentTime);
-            amp.gain.setValueAtTime(targetVolume, synthCtx.currentTime);
-
-            document.getElementById('sonar-output').innerText = `FREQ: ${Math.floor(targetFrequency)}Hz // BEAM_AMP: ${Math.floor(targetVolume * 100)}%`;
-        }
-
-        function stopSonar() {
-            if (osc) {
-                osc.stop();
-                osc.disconnect();
-                osc = null;
-            }
-            document.getElementById('sonar-output').innerText = `SIGNAL: IDLE`;
-        }
-
-        function shutdownSonarEngine() { stopSonar(); }
-
-        // --- 💻 אפליקציה 2: מנוע קוד מטריקס נופל ---
-        let matrixInterval = null;
-        function initMatrixEngine() {
-            const canvas = document.getElementById('matrix-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = canvas.parentElement.offsetWidth;
-            canvas.height = canvas.parentElement.offsetHeight;
-
-            const codeCharacters = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$@&*%";
-            const charsArray = codeCharacters.split("");
-            const font_size = 14;
-            const totalColumns = canvas.width / font_size;
-            const drops = Array(Math.floor(totalColumns)).fill(1);
-
-            // הוספת אינטראקציה: מגע במסך מאיץ ומבלבל את הקוד באותו אזור!
-            let touchX = -999;
-            canvas.addEventListener('touchmove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                touchX = e.touches[0].clientX - rect.left;
-            });
-            canvas.addEventListener('touchend', () => touchX = -999);
-
-            function renderMatrix() {
-                ctx.fillStyle = 'rgba(3, 3, 12, 0.06)'; // שובל קוד עמום
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#00ffaa'; // צבע הניאון המרכזי של האתר
-                ctx.font = font_size + 'px monospace';
-
-                for (let i = 0; i < drops.length; i++) {
-                    const character = charsArray[Math.floor(Math.random() * charsArray.length)];
-                    
-                    // אם המגע קרוב לעמודה הזו, נשנה את הקוד לצבע לבן מהיר
-                    const colX = i * font_size;
-                    if (Math.abs(colX - touchX) < 40) {
-                        ctx.fillStyle = '#ffffff';
-                    } else {
-                        ctx.fillStyle = '#00ffaa';
-                    }
-
-                    ctx.fillText(character, colX, drops[i] * font_size);
-                    
-                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
-                        drops[i] = 0;
-                    }
-                    drops[i]++;
-                }
-            }
-            matrixInterval = setInterval(renderMatrix, 33);
-        }
-
-        function shutdownMatrixEngine() {
-            clearInterval(matrixInterval);
-        }
-
-        // --- 📊 אפליקציה 3: עדכוני דיאגנוסטיקה מהחיישנים בלייב ---
-        window.addEventListener('touchmove', (e) => {
-            const diagTouch = document.getElementById('diag-touch');
-            if (diagTouch) diagTouch.innerText = `> PHYSICAL TOUCH CORES: ${e.touches.length} ACTIVE_POINTS`;
-        });
-        
-        window.addEventListener('deviceorientation', (e) => {
-            const diagGyro = document.getElementById('diag-gyro');
-            if (diagGyro && e.beta) {
-                diagGyro.innerText = `> HARDWARE GYRO REF: X[${Math.floor(e.gamma)}°] | Y[${Math.floor(e.beta)}°]`;
-            }
-        });
-    </script>
-</body>
-</html>
-        #mobile-content {
-            display: none; width: 100%; height: 100%; position: relative;
-            box-sizing: border-box; border: 2px solid #00ff66;
-        }
-
-        /* תפריט ראשי סייבר */
-        .system-header {
-            padding: 10px; background: rgba(0, 255, 102, 0.1);
-            border-bottom: 1px solid #00ff66; font-size: 14px;
-            display: flex; justify-content: space-between;
-        }
-
-        .apps-container {
-            display: flex; flex-direction: column; gap: 15px; padding: 20px;
-        }
-
-        .cyber-btn {
-            background: rgba(0,0,0,0.8);
-            border: 1px solid #00ff66;
-            color: #00ff66;
-            padding: 15px;
-            font-size: 16px;
-            font-family: 'Share Tech Mono', monospace;
-            text-align: right;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
-        }
-        .cyber-btn:active {
-            background: #00ff66;
-            color: #000;
-        }
-
-        /* מסכי האפליקציות */
-        .app-screen {
-            display: none; position: absolute; top: 40px; left: 0; width: 100%; height: calc(100% - 40px);
-            background: #020205; z-index: 100; flex-direction: column; box-sizing: border-box;
-        }
-        .app-header {
-            padding: 10px; background: #00ff66; color: #000; font-weight: bold;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .back-btn {
-            background: transparent; border: 1px solid #000; font-weight: bold; cursor: pointer;
-        }
-
-        /* אפליקציית סאונד / רדאר */
-        #radar-area {
-            flex: 1; background: radial-gradient(circle, #00220a 0%, #000000 80%);
-            position: relative; overflow: hidden;
-        }
-        .radar-sweep {
-            position: absolute; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0,255,102,0.15), transparent);
-            animation: sweep 2s linear infinite;
-        }
-        @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
-        /* אפליקציית מצלמה */
-        #video-feed {
-            width: 100%; height: 100%; object-fit: cover;
-            filter: matrix(0, 1, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1) hue-rotate(90deg) contrast(150%);
-        }
-    </style>
-</head>
-<body>
-
-    <div id="desktop-blocker">
-        <div class="glitch-text">CRITICAL_ERROR: UNKNOWN_HARDWARE</div>
-        <div style="font-size: 14px; color: #555; margin-top: 15px; max-width: 80%;">
-            SYSTEM LOCKED. REAL MOBILE HARDWARE CORES REQUIRED. EMULATION DETECTED.
-        </div>
-    </div>
-
-    <div id="mobile-content">
-        <div class="system-header">
-            <span>CORE: ACTIVE</span>
-            <span id="live-timer">00:00:00</span>
-        </div>
-
-        <div class="apps-container">
-            <button class="cyber-btn" onclick="openApp('app-audio')">[01] // סורק תדרים אקוסטי</button>
-            <button class="cyber-btn" onclick="openApp('app-cam')">[02] // מצב ראיית לילה (מצלמה)</button>
-            <button class="cyber-btn" onclick="openApp('app-sys')">[03] // נתוני חומרה בזמן אמת</button>
-        </div>
-
-        <div id="app-audio" class="app-screen">
-            <div class="app-header">
-                <span>AUDIO_SYNTH_SCANNER</span>
-                <button class="back-btn" onclick="closeApp('app-audio')">X</button>
-            </div>
-            <div id="radar-area">
-                <div class="radar-sweep"></div>
-                <p style="text-align:center; padding:20px; font-size:14px; pointer-events:none;">גע והזז את האצבע על המסך כדי לשנות תדרי קשר</p>
-                <p id="audio-stats" style="position:absolute; bottom:10px; left:10px; font-size:12px; pointer-events:none;"></p>
-            </div>
-        </div>
-
-        <div id="app-cam" class="app-screen">
-            <div class="app-header">
-                <span>THERMAL_VISION_FEED</span>
-                <button class="back-btn" onclick="closeApp('app-cam')">X</button>
-            </div>
-            <div style="flex:1; background:black; position:relative; overflow:hidden;">
-                <video id="video-feed" autoplay playsinline muted></video>
-            </div>
-        </div>
-
-        <div id="app-sys" class="app-screen">
-            <div class="app-header">
-                <span>SYSTEM_LOGS</span>
-                <button class="back-btn" onclick="closeApp('app-sys')">X</button>
-            </div>
-            <div style="padding: 20px; font-size:13px; line-height: 1.6; overflow-y:auto; flex:1;">
-                <p>> LOADING HARDWARE CORES...</p>
-                <p id="sys-touch">> TOUCH POINTS DETECTED: 0</p>
-                <p id="sys-orient">> ORIENTATION REF: INITIALIZING...</p>
-                <p style="color:#ff1133;">> OVERRIDE STATE: FALSE</p>
-                <p style="color:#00ff66;">> NET_STATUS: SECURE_CORE_ONLINE</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let bypassActive = false;
-
-        // 🔥 פונקציית החסימה המשודרגת - חוסמת גם הדמיית טלפון ב-F12!
-        function antiEmulationCheck() {
-            if (bypassActive) return;
-
-            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isSmallScreen = window.innerWidth <= 768;
-            
-            // בדיקת עומק חומרה: האם יש למכשיר תמיכה אמיתית במגע רב-נקודתי
-            const hasTrueTouch = ('ontouchstart' in window) && (navigator.maxTouchPoints > 0);
-            
-            // בדיקת זיוף: דפדפנים במחשב שמדמים טלפון משאירים את ה-User Agent אבל משקרים לגבי נתוני פלטפורמה מסוימים
-            const isEmulated = !hasTrueTouch && isSmallScreen;
-
-            if (!isMobileUA || isEmulated || !isSmallScreen) {
-                document.getElementById('desktop-blocker').style.display = 'flex';
-                document.getElementById('mobile-content').style.display = 'none';
-            } else {
-                document.getElementById('desktop-blocker').style.display = 'none';
-                document.getElementById('mobile-content').style.display = 'block';
-            }
-        }
-
-        // פקודת המעקף שלך ב-Console (לרשום ב-F12): allowDesktop()
-        window.allowDesktop = function() {
-            bypassActive = true;
-            document.getElementById('desktop-blocker').style.display = 'none';
-            document.getElementById('mobile-content').style.display = 'block';
-            console.log("🔓 קוד פיתוח הופעל. מערכת הגנה במצב השבתה.");
-        };
-
-        setInterval(antiEmulationCheck, 1000);
-        window.addEventListener('DOMContentLoaded', antiEmulationCheck);
-
-        // ניהול מעבר אפליקציות
-        function openApp(id) {
-            document.getElementById(id).style.display = 'flex';
-            if(id === 'app-audio') startAudioEngine();
-            if(id === 'app-cam') startCameraEngine();
-        }
-        function closeApp(id) {
-            document.getElementById(id).style.display = 'none';
-            if(id === 'app-audio') stopAudioEngine();
-            if(id === 'app-cam') stopCameraEngine();
-        }
-
-        // שעון עליון
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('live-timer').innerText = now.toLocaleTimeString('he-IL');
-        }, 1000);
-
-        // --- 📡 אפליקציה 1: מנוע סאונד ותדרים (Web Audio API) ---
-        let audioCtx = null;
-        let oscillator = null;
-        let gainNode = null;
-
-        function startAudioEngine() {
-            const radarArea = document.getElementById('radar-area');
-            const stats = document.getElementById('audio-stats');
-
-            radarArea.addEventListener('pointermove', handleAudioMove);
-            radarArea.addEventListener('pointerdown', handleAudioStart);
-            radarArea.addEventListener('pointerup', handleAudioStop);
-            radarArea.addEventListener('pointerleave', handleAudioStop);
-        }
-
-        function handleAudioStart(e) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (oscillator) return;
-
-            oscillator = audioCtx.createOscillator();
-            gainNode = audioCtx.createGain();
-            
-            oscillator.type = 'sawtooth'; // צליל האקרים מחוספס
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            oscillator.start();
-            handleAudioMove(e);
-        }
-
-        function handleAudioMove(e) {
-            if (!oscillator) return;
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            // שינוי תדר לפי מיקום האצבע על המסך
-            const freq = Math.max(100, Math.min(1500, (x / rect.width) * 1200));
-            const volume = Math.max(0.01, Math.min(0.2, 1 - (y / rect.height)));
-
-            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
-
-            document.getElementById('audio-stats').innerText = `FREQ: ${Math.floor(freq)}Hz // AMP: ${Math.floor(volume * 100)}%`;
-        }
-
-        function handleAudioStop() {
-            if (oscillator) {
-                oscillator.stop();
-                oscillator.disconnect();
-                oscillator = null;
-            }
-        }
-
-        function stopAudioEngine() {
-            handleAudioStop();
-        }
-
-        // --- 🎥 אפליקציה 2: מנוע המצלמה הירוקה ---
-        let camStream = null;
-        async function startCameraEngine() {
-            const video = document.getElementById('video-feed');
-            try {
-                camStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }, // מצלמה אחורית
-                    audio: false
-                });
-                video.srcObject = camStream;
-            } catch (err) {
-                console.log("המצלמה דורשת מכשיר אמיתי ופרוטוקול HTTPS מאובטח.");
-            }
-        }
-        function stopCameraEngine() {
-            if (camStream) {
-                camStream.getTracks().forEach(track => track.stop());
-                camStream = null;
-            }
-        }
-
-        // --- 📊 אפליקציה 3: עדכוני חומרה בלייב ---
-        window.addEventListener('touchmove', (e) => {
-            document.getElementById('sys-touch').innerText = `> TOUCH POINTS DETECTED: ${e.touches.length}`;
-        });
-        window.addEventListener('deviceorientation', (e) => {
-            if(e.beta) {
-                document.getElementById('sys-orient').innerText = `> ORIENTATION X: ${Math.floor(e.gamma)} | Y: ${Math.floor(e.beta)}`;
-            }
-        });
     </script>
 </body>
 </html>
