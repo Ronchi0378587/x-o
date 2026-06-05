@@ -3,244 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS_CORE</title>
+    <title>ממשק מובייל מתקדם</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap');
-
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #020205; color: #00ffaa;
-            font-family: 'Share Tech Mono', monospace;
-            overflow: hidden; user-select: none; -webkit-user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f6f8fa; color: #1f2328;
         }
 
-        /* מסך החסימה למחשב */
+        /* מסך חסימה נקי למחשב */
         #desktop-blocker {
             display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; color: #ff3344; z-index: 99999;
+            background: #ffffff; color: #000000; z-index: 99999;
             flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; font-family: 'Orbitron', sans-serif;
+            text-align: center; font-weight: 600; font-size: 20px;
         }
-        .block-box {
-            border: 1px dashed #ff3344; padding: 25px; background: rgba(255, 51, 68, 0.03);
+        #desktop-blocker .sub-text {
+            font-size: 14px; color: #57606a; margin-top: 8px; font-weight: normal;
         }
 
-        /* הממשק המרכזי לטלפון */
+        /* תוכן האתר הראשי לטלפון */
         #mobile-content {
-            display: none; width: 100%; height: 100%; position: relative;
-            box-sizing: border-box; background: #04040c;
+            display: none; box-sizing: border-box; padding: 20px;
+            flex-direction: column; gap: 15px; max-width: 500px; margin: 0 auto;
         }
 
-        .top-status {
-            padding: 10px 15px; background: rgba(0, 255, 170, 0.05);
-            border-bottom: 1px dashed #00ffaa; font-size: 12px;
-            display: flex; justify-content: space-between; font-family: 'Orbitron', sans-serif;
+        /* כרטיסי פיצ'רים מעוצבים */
+        .feature-card {
+            background: #ffffff; border: 1px solid #d0d7de;
+            border-radius: 12px; padding: 20px;
+            box-shadow: 0 2px 8px rgba(140, 148, 159, 0.1);
         }
+        .feature-card h3 { margin: 0 0 10px 0; font-size: 18px; color: #0969da; }
+        .feature-card p { margin: 0 0 15px 0; font-size: 14px; color: #57606a; line-height: 1.4; }
 
-        /* תפריט האפליקציות */
-        .apps-container {
-            display: flex; flex-direction: column; gap: 15px; padding: 25px;
+        /* כפתורים מודרניים */
+        .btn {
+            background-color: #0969da; color: #ffffff; border: none;
+            padding: 10px 20px; font-size: 14px; font-weight: 600;
+            border-radius: 6px; cursor: pointer; width: 100%; box-sizing: border-box;
         }
-        .app-btn {
-            background: rgba(0, 15, 10, 0.6); border: 1px solid #00ffaa;
-            color: #00ffaa; padding: 15px; font-size: 15px; text-align: right;
-            font-family: 'Share Tech Mono', monospace; cursor: pointer;
-            box-shadow: inset 0 0 10px rgba(0, 255, 170, 0.1);
-        }
-        .app-btn:active { background: #00ffaa; color: #000; }
+        .btn:active { background-color: #0c61c9; }
+        .btn-secondary { background-color: #24292f; margin-top: 8px; }
 
-        /* מסכי האפליקציות */
-        .app-page {
-            display: none; position: absolute; top: 38px; left: 0; width: 100%; height: calc(100% - 38px);
-            background: #020205; z-index: 100; flex-direction: column; box-sizing: border-box;
+        #camera-feed {
+            width: 100%; max-height: 200px; background: #000; 
+            border-radius: 6px; display: none; margin-top: 10px; object-fit: cover;
         }
-        .app-header {
-            padding: 10px 15px; background: rgba(0, 255, 170, 0.15);
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: 'Orbitron', sans-serif; font-size: 11px; border-bottom: 1px solid #00ffaa;
-        }
-        .close-btn {
-            background: transparent; border: 1px solid #00ffaa; color: #00ffaa;
-            padding: 2px 8px; font-family: 'Orbitron', sans-serif; cursor: pointer;
-        }
-
-        /* פיצ'ר 1: רדאר */
-        #radar-screen {
-            flex: 1; background: radial-gradient(circle, #001f15 0%, #020205 80%);
-            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .radar-pulse {
-            position: absolute; border: 1px solid rgba(0, 255, 170, 0.2); border-radius: 50%;
-            animation: pulseWave 2.5s infinite linear; pointer-events: none;
-        }
-        @keyframes pulseWave {
-            0% { width: 0px; height: 0px; opacity: 1; }
-            100% { width: 500px; height: 500px; opacity: 0; }
-        }
-
-        /* פיצ'ר 2: מטריקס */
-        #matrix-canvas { width: 100%; height: 100%; background: #000; display: block; }
     </style>
 </head>
 <body>
 
     <div id="desktop-blocker">
-        <div class="block-box">
-            <div style="font-size: 18px; font-weight: bold; letter-spacing: 2px;">CORE_LOCK: ACCESS_DENIED</div>
-            <p style="font-size: 12px; color: #888; margin: 10px 0 0 0;">REAL MOBILE HARDWARE CORE REQUIRED.</p>
-        </div>
+        <div>הגישה לאתר מותרת מטלפונים בלבד</div>
+        <div class="sub-text">אנא היכנס מהסמארטפון שלך לצפייה בתוכן הרספונסיבי.</div>
     </div>
 
     <div id="mobile-content">
-        <div class="top-status">
-            <span>[STATUS: ONLINE]</span>
-            <span id="live-clock">00:00:00</span>
+        <h2 style="margin: 10px 0; font-size: 24px; text-align: center;">לוח בקרה לנייד 📱</h2>
+        
+        <div class="feature-card">
+            <h3>📍 שירותי מיקום מתקדמים</h3>
+            <p>האתר ניגש לרכיב ה-GPS הפנימי של הטלפון כדי להפיק מיקוד מדויק בזמן אמת.</p>
+            <button class="btn" onclick="getLocation()">זהה את המיקום שלי</button>
+            <div id="location-display" style="margin-top:10px; font-size:13px; color:#24292f; font-family:monospace;"></div>
         </div>
 
-        <div style="text-align:center; font-family:'Orbitron', sans-serif; font-size:16px; margin:30px 0 10px 0; letter-spacing:2px;">NEXUS SYSTEM</div>
-
-        <div class="apps-container">
-            <button class="app-btn" onclick="openApp('page-radar')">[01] // רדאר תדרים אקוסטי</button>
-            <button class="app-btn" onclick="openApp('page-matrix')">[02] // מפענח זרם נתונים (Matrix)</button>
-            <button class="app-btn" onclick="openApp('page-diag')">[03] // דיאגנוסטיקת חיישני ליבה</button>
+        <div class="feature-card">
+            <h3>📷 הפעלת מצלמת חומרה</h3>
+            <p>גישה ישירה לעדשת המצלמה האחורית של הטלפון להזרמת וידאו מקומית ומאובטחת.</p>
+            <button class="btn" onclick="toggleCamera()">פתח / סגור מצלמה</button>
+            <video id="camera-feed" autoplay playsinline muted></video>
         </div>
 
-        <div id="page-radar" class="app-page">
-            <div class="app-header"><span>QUANTUM_SONAR</span><button class="close-btn" onclick="closeApp('page-radar')">SHUTDOWN</button></div>
-            <div id="radar-screen">
-                <div class="radar-pulse" style="animation-delay: 0s;"></div>
-                <div class="radar-pulse" style="animation-delay: 1.2s;"></div>
-                <div style="pointer-events:none; text-align:center; font-size:13px; z-index:5;">
-                    <p>גע והזז את האצבע על המסך ליצירת תדר</p>
-                    <p id="sonar-output" style="color: #ff3344; margin-top:5px;">SIGNAL: IDLE</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-matrix" class="app-page">
-            <div class="app-header"><span>DATA_DECRYPTER</span><button class="close-btn" onclick="closeApp('page-matrix')">SHUTDOWN</button></div>
-            <div style="flex:1; position:relative; overflow:hidden;"><canvas id="matrix-canvas"></canvas></div>
-        </div>
-
-        <div id="page-diag" class="app-page">
-            <div class="app-header"><span>HARDWARE_DIAG</span><button class="close-btn" onclick="closeApp('page-diag')">SHUTDOWN</button></div>
-            <div style="padding: 25px; font-size:14px; line-height: 1.8; overflow-y:auto; flex:1;">
-                <p style="color: #ff3344;">> INITIALIZING SENSOR DATA...</p>
-                <p id="txt-touch">> PHYSICAL TOUCH ACTIVE: 0 POINTS</p>
-                <p id="txt-gyro">> HARDWARE GYRO: ACCESSING CORES...</p>
-                <p style="color:#00ffaa; margin-top:15px;">> SECURITY_GRID: VERIFIED_STABLE</p>
-            </div>
+        <div class="feature-card">
+            <h3>📤 שיתוף נייד מקורי</h3>
+            <p>משתמש במנוע השיתוף של המכשיר כדי לשלוח את האתר לחברים בווטסאפ או באפליקציות אחרות.</p>
+            <button class="btn btn-secondary" onclick="shareWebsite()">שתף את האתר באפליקציות</button>
         </div>
     </div>
 
     <script>
-        let isBypassActive = false;
+        let isBypass = false;
 
-        // 🔥 פונקציית הגנה קשוחה - חוסמת מחשבים רגילים וגם את כפתור מדמה הסטטוס של F12!
-        function securityCheck() {
-            if (isBypassActive) return;
+        // 🛡️ בדיקת אבטחה חכמה - מונעת כניסה מ-F12 (מדמה טלפון) על ידי זיהוי דפדפן שולחני
+        function checkDevice() {
+            if (isBypass) return;
 
             const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // בדיקת חומרה אמיתית - האם לדפדפן יש מערך מגע מובנה פיזי (מדמי F12 נופלים כאן)
-            const hasTouchHardware = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            // בדיקה האם הדפדפן תומך באירועי מגע פיזיים של מסך (ולא סימולציה של עכבר ב-F12)
+            const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            
+            // בדיקה האם המערכת המדווחת היא ווינדוס או מק (מדמי F12 משנים מסך אבל משאירים את החומרה)
+            const isDesktopPlatform = /Win32|Win64|MacIntel|Linux x86_64/i.test(navigator.platform);
 
-            // חסימה אם זה לא UA של נייד, או שאין חומרת מגע פיזית
-            if (!isMobileUA || !hasTouchHardware) {
+            if (!isMobileUA || !hasTouch || isDesktopPlatform) {
                 document.getElementById('desktop-blocker').style.display = 'flex';
                 document.getElementById('mobile-content').style.display = 'none';
             } else {
                 document.getElementById('desktop-blocker').style.display = 'none';
-                document.getElementById('mobile-content').style.display = 'block';
+                document.getElementById('mobile-content').style.display = 'flex';
             }
         }
 
-        // 🔓 פקודת המעקף הרשמית שלך ל-Console (F12): allowDesktop()
+        // 🔓 פקודת המעקף שלך ל-Console במידה ואתה בונה את האתר מהמחשב: allowDesktop()
         window.allowDesktop = function() {
-            isBypassActive = true;
+            isBypass = true;
             document.getElementById('desktop-blocker').style.display = 'none';
-            document.getElementById('mobile-content').style.display = 'block';
-            console.log("🔓 SYSTEM OVERRIDE: ACTIVE");
+            document.getElementById('mobile-content').style.display = 'flex';
+            console.log("🔓 הגישה מהמחשב אושרה לבדיקת פיתוח.");
         };
 
-        // הרצת בדיקת אבטחה קבועה
-        setInterval(securityCheck, 1000);
-        window.addEventListener('DOMContentLoaded', securityCheck);
+        // הרצת בדיקת המכשיר בטעינה
+        window.addEventListener('DOMContentLoaded', checkDevice);
 
-        // ניהול ניווט אפליקציות באתר
-        function openApp(id) {
-            document.getElementById(id).style.display = 'flex';
-            if (id === 'page-radar') initSonar();
-            if (id === 'page-matrix') initMatrix();
-        }
-        function closeApp(id) {
-            document.getElementById(id).style.display = 'none';
-            if (id === 'page-radar') stopSonar();
-            if (id === 'page-matrix') stopMatrix();
+        // --- קוד פיצ'ר 1: מיקום GPS ---
+        function getLocation() {
+            const display = document.getElementById('location-display');
+            if (navigator.geolocation) {
+                display.innerText = "מתחבר ללוויין GPS...";
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    display.innerHTML = `קו רוחב: ${lat.toFixed(4)}<br>קו אורך: ${lng.toFixed(4)}
+                    <br><button class="btn btn-secondary" style="padding:5px 10px; font-size:12px; width:auto; margin-top:5px;" onclick="window.open('https://www.google.com/maps?q=${lat},${lng}')">פתח ב-Google Maps 🗺️</button>`;
+                }, () => {
+                    display.innerText = "הגישה למיקום נדחתה. יש לאשר מיקום בדפדפן.";
+                });
+            } else {
+                display.innerText = "הדפדפן שלך לא תומך בשירותי מיקום.";
+            }
         }
 
-        // שעון עליון חי
-        setInterval(() => {
-            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('he-IL');
-        }, 1000);
+        // --- קוד פיצ'ר 2: הפעלת מצלמה ---
+        let streamTrack = null;
+        async function toggleCamera() {
+            const video = document.getElementById('camera-feed');
+            if (streamTrack) {
+                streamTrack.stop();
+                streamTrack = null;
+                video.style.display = 'none';
+                return;
+            }
 
-        // --- מנוע רדאר קולי (Web Audio API) ---
-        let audioCtx = null, osc = null, amp = null;
-        function initSonar() {
-            const screen = document.getElementById('radar-screen');
-            screen.addEventListener('pointermove', moveSonar);
-            screen.addEventListener('pointerdown', startSonar);
-            screen.addEventListener('pointerup', stopSonar);
-            screen.addEventListener('pointerleave', stopSonar);
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }, // מצלמה אחורית של הטלפון
+                    audio: false
+                });
+                video.srcObject = stream;
+                video.style.display = 'block';
+                streamTrack = stream.getVideoTracks()[0];
+            } catch (err) {
+                alert("המצלמה דורשת מכשיר טלפון אמיתי וחיבור מאובטח (HTTPS).");
+            }
         }
-        function startSonar(e) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (osc) return;
-            osc = audioCtx.createOscillator(); amp = audioCtx.createGain();
-            osc.type = 'triangle'; osc.connect(amp); amp.connect(audioCtx.destination);
-            osc.start(); moveSonar(e);
-        }
-        function moveSonar(e) {
-            if (!osc) return;
-            const bounds = e.currentTarget.getBoundingClientRect();
-            const freq = Math.max(80, Math.min(1200, ((e.clientX - bounds.left) / bounds.width) * 1000));
-            const vol = Math.max(0.02, Math.min(0.25, 1 - ((e.clientY - bounds.top) / bounds.height)));
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            amp.gain.setValueAtTime(vol, audioCtx.currentTime);
-            document.getElementById('sonar-output').innerText = `FREQ: ${Math.floor(freq)}Hz // VOL: ${Math.floor(vol * 100)}%`;
-        }
-        function stopSonar() { if (osc) { osc.stop(); osc.disconnect(); osc = null; } document.getElementById('sonar-output').innerText = `SIGNAL: IDLE`; }
 
-        // --- מנוע קוד מטריקס נופל ---
-        let matrixInterval = null;
-        function initMatrix() {
-            const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.offsetWidth; canvas.height = canvas.parentElement.offsetHeight;
-            const chars = "01010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$@&*%".split("");
-            const font_size = 14; const drops = Array(Math.floor(canvas.width / font_size)).fill(1);
-            let touchX = -999;
-            canvas.addEventListener('touchmove', (e) => { touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left; });
-            canvas.addEventListener('touchend', () => touchX = -999);
-
-            matrixInterval = setInterval(() => {
-                ctx.fillStyle = 'rgba(2, 2, 5, 0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < drops.length; i++) {
-                    ctx.fillStyle = Math.abs((i * font_size) - touchX) < 40 ? '#ffffff' : '#00ffaa';
-                    ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * font_size, drops[i] * font_size);
-                    if (drops[i] * font_size > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
+        // --- קוד פיצ'ר 3: שיתוף מערכת ---
+        async function shareWebsite() {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'האתר הנייד שלי',
+                        text: 'כנסו לראות את האתר הנייד החדש שפיתחתי!',
+                        url: window.location.href
+                    });
+                } catch (err) {
+                    console.log("השיתוף בוטל.");
                 }
-            }, 33);
+            } else {
+                alert("פיצ'ר שיתוף חומרתי נתמך רק בדפדפנים של טלפונים ניידים.");
+            }
         }
-        function stopMatrix() { clearInterval(matrixInterval); }
-
-        // --- עדכוני חיישנים בלייב ---
-        window.addEventListener('touchmove', (e) => {
-            const t = document.getElementById('txt-touch'); if(t) t.innerText = `> PHYSICAL TOUCH ACTIVE: ${e.touches.length} POINTS`;
-        });
-        window.addEventListener('deviceorientation', (e) => {
-            const g = document.getElementById('txt-gyro'); if(g && e.beta) g.innerText = `> HARDWARE GYRO: X[${Math.floor(e.gamma)}°] | Y[${Math.floor(e.beta)}°]`;
-        });
     </script>
+
 </body>
 </html>
